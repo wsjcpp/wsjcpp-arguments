@@ -1,5 +1,6 @@
 wsjcpp-arguments
 tmp/*
+.vscode/*
 
 # Prerequisites
 *.d
