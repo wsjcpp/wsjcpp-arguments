@@ -1,28 +1,28 @@
-#include "unit_test_simple_arguments.h"
+#include "unit_test_arguments_with_params.h"
 #include <vector>
 #include <iostream>
 #include <wsjcpp_core.h>
 #include <wsjcpp_arguments.h>
 
-REGISTRY_UNIT_TEST(UnitTestSimpleArguments)
+REGISTRY_UNIT_TEST(UnitTestArgumentsWithParams)
 
-UnitTestSimpleArguments::UnitTestSimpleArguments()
-    : UnitTestBase("UnitTestSimpleArguments") {
+UnitTestArgumentsWithParams::UnitTestArgumentsWithParams()
+    : UnitTestBase("UnitTestArgumentsWithParams") {
     //
 }
 
 // ---------------------------------------------------------------------
 
-void UnitTestSimpleArguments::init() {
+void UnitTestArgumentsWithParams::init() {
     // nothing
 }
 
 // ---------------------------------------------------------------------
 
-class ArgumentProcessorInstall : public WSJCppArgumentProcessor {
+class ArgumentProcessorUninstall : public WSJCppArgumentProcessor {
     public:
-        ArgumentProcessorInstall() : WSJCppArgumentProcessor("install", "install something") {
-            TAG = "ArgumentProcessorInstall";
+        ArgumentProcessorUninstall() : WSJCppArgumentProcessor("uninstall", "uninstall something") {
+            TAG = "ArgumentProcessorUninstall";
         };
 
         virtual int handle(const std::string &sProgramName, const std::vector<std::string> &vSubParams) {
@@ -37,7 +37,7 @@ class ArgumentProcessorInstall : public WSJCppArgumentProcessor {
             }
             
             if (vSubParams[0] != "install") {
-                WSJCppLog::err(TAG, "vSubParams[0] expected as 'install'");
+                WSJCppLog::err(TAG, "vSubParams[0] expected as 'uninstall'");
                 return -1;
             }
 
@@ -54,7 +54,7 @@ class ArgumentProcessorInstall : public WSJCppArgumentProcessor {
         }
 
         virtual bool canHandle(const std::vector<std::string> &vSubParams) {
-            if (vSubParams.size() > 0 && vSubParams[0] == "install") {
+            if (vSubParams.size() > 0 && vSubParams[0] == "uninstall") {
                 return true;
             }
             return false;
@@ -66,13 +66,15 @@ class ArgumentProcessorInstall : public WSJCppArgumentProcessor {
 
 // ---------------------------------------------------------------------
 
-bool UnitTestSimpleArguments::run() {
+bool UnitTestArgumentsWithParams::run() {
     bool bTestSuccess = true;
 
-    const int argc1 = 4;
-    const char *argv1[argc1] = {"./program", "install", "1", "2"};
+    const int argc1 = 5;
+    const char *argv1[argc1] = {"./program", "-v", "uninstall", "1", "2"};
     WSJCppArguments args1(argc1, argv1);
-    args1.getRoot().registryProcessor(new ArgumentProcessorInstall());
+    args1.getRoot().registryProcessor(new ArgumentProcessorUninstall());
+    args1.getRoot().registrySingleArgument("-v", "verbose");
+   
 
     compareB(bTestSuccess, "canHandle-1", args1.canHandle(), true);
     compareN(bTestSuccess, "handle-1", args1.handle(), 0);

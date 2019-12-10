@@ -1,19 +1,41 @@
-#ifndef WSJCPP_PARSE_ARGUMENTS_H
-#define WSJCPP_PARSE_ARGUMENTS_H
+#ifndef WSJCPP_ARGUMENTS_H
+#define WSJCPP_ARGUMENTS_H
 
 #include <string>
 #include <vector>
+#include <map>
 
 // ---------------------------------------------------------------------
 
 class WSJCppArgumentProcessor {
     public:
-        WSJCppArgumentProcessor();
+        WSJCppArgumentProcessor(const std::string &sName, const std::string &sDescription);
+        std::string getName();
+        std::string getDescription();
+
+        void registryProcessor(WSJCppArgumentProcessor *p);
+        void registrySingleArgument(const std::string &sArgumentName, const std::string &sDescription);
+        void registryParamArgument(const std::string &sArgumentName, const std::string &sDescription);
+        
+        std::string help(const std::string &sProgramName, const std::string &sPrefix);
+
+        WSJCppArgumentProcessor *findProcessor(const std::vector<std::string> &vSubParams);
+        
+
+        bool hasSingleArgument(const std::string &sArgumentName);
+        bool getValueOfParam(const std::string &sArgumentName);
+        bool hasParamArgument(const std::string &sArgumentName, const std::string &sDescription);
+        
+        
         virtual int handle(const std::string &sProgramName, const std::vector<std::string> &vSubParams);
         virtual bool canHandle(const std::vector<std::string> &vSubParams);
-        void addProcessor(WSJCppArgumentProcessor *p);
     private:
+        std::string TAG;
+        std::string m_sName;
+        std::string m_sDescription;
         std::vector<WSJCppArgumentProcessor *> m_vProcessors;
+        std::map<std::string, std::string> m_vSingleArguments;
+        std::map<std::string, std::string> m_vParamArguments;
 };
 
 // ---------------------------------------------------------------------
@@ -21,13 +43,14 @@ class WSJCppArgumentProcessor {
 class WSJCppArguments {
     public:
         WSJCppArguments(int argc, const char* argv[]);
-        void addProcessor(WSJCppArgumentProcessor *p);
         int handle();
         bool canHandle();
         std::string help();
+        WSJCppArgumentProcessor &getRoot();
 
     private:
-        WSJCppArgumentProcessor *findProcessor();
+        WSJCppArgumentProcessor *m_pRoot;
+
         std::string TAG;
         std::vector<std::string> m_vArguments;
         std::string m_sProgramName;
@@ -36,4 +59,4 @@ class WSJCppArguments {
 
 // ---------------------------------------------------------------------
 
-#endif // WSJCPP_PARSE_ARGUMENTS_H
+#endif // WSJCPP_ARGUMENTS_H

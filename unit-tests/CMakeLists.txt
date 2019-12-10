@@ -30,6 +30,8 @@ list (APPEND WSJCPP_SOURCES "./src/unit_tests.h")
 list (APPEND WSJCPP_SOURCES "./src/unit_tests.cpp")
 list (APPEND WSJCPP_SOURCES "./src/unit_test_simple_arguments.h")
 list (APPEND WSJCPP_SOURCES "./src/unit_test_simple_arguments.cpp")
+list (APPEND WSJCPP_SOURCES "./src/unit_test_arguments_with_params.h")
+list (APPEND WSJCPP_SOURCES "./src/unit_test_arguments_with_params.cpp")
 
 include_directories(${WSJCPP_INCLUDE_DIRS})
 
