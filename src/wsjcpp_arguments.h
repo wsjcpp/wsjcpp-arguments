@@ -8,17 +8,12 @@
 
 class WSJCppArgumentProcessor {
     public:
-        WSJCppArgumentProcessor(const std::string &sName);
+        WSJCppArgumentProcessor();
         virtual int handle(const std::string &sProgramName, const std::vector<std::string> &vSubParams);
         virtual bool canHandle(const std::vector<std::string> &vSubParams);
-
-        void singleFlag(const std::string &sName);
-        void param(const std::string &sName);
-        void addSubArgumentProcesor(const std::string &sName, WSJCppArgumentProcessor *);
+        void addProcessor(WSJCppArgumentProcessor *p);
     private:
-        std::string m_sName;
-        std::string m_sProgramName;
-        std::vector<WSJCppArgumentProcessor *> m_vSubProcessors;
+        std::vector<WSJCppArgumentProcessor *> m_vProcessors;
 };
 
 // ---------------------------------------------------------------------
@@ -29,10 +24,10 @@ class WSJCppArguments {
         void addProcessor(WSJCppArgumentProcessor *p);
         int handle();
         bool canHandle();
-
         std::string help();
 
     private:
+        WSJCppArgumentProcessor *findProcessor();
         std::string TAG;
         std::vector<std::string> m_vArguments;
         std::string m_sProgramName;

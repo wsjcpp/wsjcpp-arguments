@@ -21,15 +21,39 @@ void UnitTestSimpleArguments::init() {
 
 class ArgumentProcessorInstall : public WSJCppArgumentProcessor {
     public:
-        ArgumentProcessorInstall() : WSJCppArgumentProcessor("install") {
+        ArgumentProcessorInstall() {
             TAG = "ArgumentProcessorInstall";
         };
 
-        int handle(const std::string &sProgramName, const std::vector<std::string> &vSubParams) {
-            return -1;
+        virtual int handle(const std::string &sProgramName, const std::vector<std::string> &vSubParams) {
+            if (vSubParams.size() != 3) {
+                WSJCppLog::err(TAG, "Expected 3 args");
+                return -1;
+            }
+
+            if (sProgramName != "./program") {
+                WSJCppLog::err(TAG, "sProgramName expected as './program'");
+                return -1;
+            }
+            
+            if (vSubParams[0] != "install") {
+                WSJCppLog::err(TAG, "vSubParams[0] expected as 'install'");
+                return -1;
+            }
+
+            if (vSubParams[1] != "1") {
+                WSJCppLog::err(TAG, "vSubParams[1] expected as '1'");
+                return -1;
+            }
+
+            if (vSubParams[2] != "2") {
+                WSJCppLog::err(TAG, "vSubParams[2] expected as '2'");
+                return -1;
+            }
+            return 0;
         }
 
-        bool canHandle(const std::vector<std::string> &vSubParams) {
+        virtual bool canHandle(const std::vector<std::string> &vSubParams) {
             if (vSubParams.size() > 0 && vSubParams[0] == "install") {
                 return true;
             }
@@ -47,16 +71,18 @@ bool UnitTestSimpleArguments::run() {
 
     const int argc1 = 4;
     const char *argv1[argc1] = {"./program", "install", "1", "2"};
-    WSJCppArguments args1(argc1, argv1);    
+    WSJCppArguments args1(argc1, argv1);
+    args1.addProcessor(new ArgumentProcessorInstall());
+
     compareB(bTestSuccess, "canHandle-1", args1.canHandle(), true);
     compareN(bTestSuccess, "handle-1", args1.handle(), 0);
 
     const int argc2 = 4;
-    const char *argv2[argc2] = {"./program", "some", "1", "2"};
-    WSJCppArguments args2(argc2, argv2);    
-    compareB(bTestSuccess, "canHandle-1", args2.canHandle(), false);
-    compareN(bTestSuccess, "handle-1", args2.handle(), -1);
+    const char *argv2[argc2] = {"./program2", "some", "1", "2"};
+    WSJCppArguments args2(argc2, argv2);
+    compareB(bTestSuccess, "canHandle-2", args2.canHandle(), false);
+    compareN(bTestSuccess, "handle-2", args2.handle(), -1);
 
 
-    return true;
+    return bTestSuccess;
 }
