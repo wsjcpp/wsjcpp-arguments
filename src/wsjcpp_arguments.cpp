@@ -1,6 +1,68 @@
 #include "wsjcpp_arguments.h"
 #include <wsjcpp_core.h>
 
+WSJCppArgumentSingle::WSJCppArgumentSingle(const std::string &sName, const std::string &sDescription) {
+    TAG = "WSJCppArgumentSingle-" + sName;
+    m_sName = sName;
+    m_sDescription = sDescription;
+}
+
+// ---------------------------------------------------------------------
+
+std::string WSJCppArgumentSingle::getName() {
+    return m_sName;
+}
+
+// ---------------------------------------------------------------------
+
+std::string WSJCppArgumentSingle::getDescription() {
+    return m_sDescription;
+}
+
+// ---------------------------------------------------------------------
+
+std::string WSJCppArgumentSingle::help(const std::string &sProgramName, const std::string &sPrefix) {
+    return sPrefix + "[" + m_sName + "] - " + m_sDescription;
+}
+
+// ---------------------------------------------------------------------
+
+WSJCppArgumentParameter::WSJCppArgumentParameter(const std::string &sName, const std::string &sDescription) {
+    TAG = "WSJCppArgumentParameter-" + sName;
+    m_sName = sName;
+    m_sDescription = sDescription;
+}
+
+// ---------------------------------------------------------------------
+
+std::string WSJCppArgumentParameter::getName() {
+    return m_sName;
+}
+
+// ---------------------------------------------------------------------
+
+std::string WSJCppArgumentParameter::getDescription() {
+    return m_sDescription;
+}
+
+// ---------------------------------------------------------------------
+
+std::string WSJCppArgumentParameter::getValue() {
+    return m_sValue;
+}
+
+// ---------------------------------------------------------------------
+
+void WSJCppArgumentParameter::setValue(const std::string &sValue) {
+    m_sValue = sValue;
+}
+
+// ---------------------------------------------------------------------
+
+std::string WSJCppArgumentParameter::help(const std::string &sProgramName, const std::string &sPrefix) {
+    return sPrefix + "[" + m_sName + " <val>] - " + m_sDescription;
+}
+
 // ---------------------------------------------------------------------
 
 WSJCppArgumentProcessor::WSJCppArgumentProcessor(const std::string &sName, const std::string &sDescription) {
@@ -23,24 +85,9 @@ std::string WSJCppArgumentProcessor::getDescription() {
 
 // ---------------------------------------------------------------------
 
-int WSJCppArgumentProcessor::handle(const std::string &sProgramName, const std::vector<std::string> &vSubParams) {
-
-    return -1;
-}
-
-// ---------------------------------------------------------------------
-
-bool WSJCppArgumentProcessor::canHandle(const std::vector<std::string> &vSubParams) {
-    return false;
-}
-
-// ---------------------------------------------------------------------
-
 void WSJCppArgumentProcessor::registryProcessor(WSJCppArgumentProcessor *p) {
-    for (int i = 0; i < m_vProcessors.size(); i++) {
-        if (m_vProcessors[i]->getName() == p->getName()) {
-            WSJCppLog::throw_err(TAG, "Processor '" + p->getName() + "' already registered");
-        }
+    if (hasRegisteredArgumentName(p->getName())) {
+        WSJCppLog::throw_err(TAG, "Argument Name '" + p->getName() + "' already registered");
     }
     m_vProcessors.push_back(p);
 }
@@ -48,44 +95,60 @@ void WSJCppArgumentProcessor::registryProcessor(WSJCppArgumentProcessor *p) {
 // ---------------------------------------------------------------------
 
 void WSJCppArgumentProcessor::registrySingleArgument(const std::string &sArgumentName, const std::string &sDescription) {
-
-}
-
-// ---------------------------------------------------------------------
-
-void WSJCppArgumentProcessor::registryParamArgument(const std::string &sArgumentName, const std::string &sDescription) {
-
-}
-
-// ---------------------------------------------------------------------
-
-std::string WSJCppArgumentProcessor::help(const std::string &sProgramName, const std::string &sPrefix) {
-    std::string sRet = "";
-    if (sProgramName == m_sName) {
-        sRet = "Usage: " + m_sName + " <params> <command> <subcomands/args>\r\n";
+    if (hasRegisteredArgumentName(sArgumentName)) {
+        WSJCppLog::throw_err(TAG, "Argument Name '" + sArgumentName + "' already registered");
     }
-    sRet += sPrefix + "  <params>: \r\n";
-    sRet += sPrefix + "    [] - description \r\n"; // TODO
+    m_vSingleArguments.push_back(new WSJCppArgumentSingle(sArgumentName, sDescription));
+}
 
-    if (m_vProcessors.size() > 0) {
-        sRet += sPrefix + "  <commands>: \r\n";
-        for (int i = 0; i < m_vProcessors.size(); i++) {
-            WSJCppArgumentProcessor *p = m_vProcessors[i];
-            sRet += sPrefix + "    " + p->getName() + " - " + p->getDescription() + "\r\n";
-            sRet += p->help(sProgramName, sPrefix + "  ");
+// ---------------------------------------------------------------------
+
+void WSJCppArgumentProcessor::registryParameterArgument(const std::string &sArgumentName, const std::string &sDescription) {
+    if (hasRegisteredArgumentName(sArgumentName)) {
+        WSJCppLog::throw_err(TAG, "Argument Name '" + sArgumentName + "' already registered");
+    }
+    m_vParameterArguments.push_back(new WSJCppArgumentParameter(sArgumentName, sDescription));
+}
+
+// ---------------------------------------------------------------------
+
+WSJCppArgumentSingle *WSJCppArgumentProcessor::findRegisteredSingleArgument(const std::string &sArgumentName) {
+    WSJCppArgumentSingle *pRet = nullptr;
+    for (int i = 0; i < m_vSingleArguments.size(); i++) {
+        if (m_vSingleArguments[i]->getName() == sArgumentName) {
+            if (pRet == nullptr) {
+                pRet = m_vSingleArguments[i];
+            } else {
+                WSJCppLog::throw_err(TAG, "Single argument '" + sArgumentName + "' already exists");
+            }
         }
     }
-    sRet += "\r\n"; // TODO
-    return sRet;
+    return pRet;
 }
 
 // ---------------------------------------------------------------------
 
-WSJCppArgumentProcessor *WSJCppArgumentProcessor::findProcessor(const std::vector<std::string> &vSubParams) {
+WSJCppArgumentParameter *WSJCppArgumentProcessor::findRegisteredParameterArgument(const std::string &sArgumentName) {
+    WSJCppArgumentParameter *pRet = nullptr;
+    for (int i = 0; i < m_vParameterArguments.size(); i++) {
+        if (m_vParameterArguments[i]->getName() == sArgumentName) {
+            if (pRet == nullptr) {
+                pRet = m_vParameterArguments[i];
+            } else {
+                WSJCppLog::throw_err(TAG, "Single argument '" + sArgumentName + "' already exists");
+            }
+        }
+    }
+    return pRet;
+}
+
+
+// ---------------------------------------------------------------------
+
+WSJCppArgumentProcessor *WSJCppArgumentProcessor::findRegisteredProcessor(const std::string &sArgumentName) {
     WSJCppArgumentProcessor *pRet = nullptr;
-    bool bCanHandle = false;
     for (int i = 0; i < m_vProcessors.size(); i++) {
-        if (m_vProcessors[i]->canHandle(vSubParams)) {
+        if (m_vProcessors[i]->getName() == sArgumentName) {
             if (pRet == nullptr) {
                 pRet = m_vProcessors[i];
             } else {
@@ -98,44 +161,161 @@ WSJCppArgumentProcessor *WSJCppArgumentProcessor::findProcessor(const std::vecto
 
 // ---------------------------------------------------------------------
 
-WSJCppArguments::WSJCppArguments(int argc, const char* argv[]) {
+bool WSJCppArgumentProcessor::hasRegisteredArgumentName(const std::string &sArgumentName) {
+    for (int i = 0; i < m_vParameterArguments.size(); i++) {
+        if (m_vParameterArguments[i]->getName() == sArgumentName) {
+            return true;
+        }
+    }
+
+    for (int i = 0; i < m_vProcessors.size(); i++) {
+        if (m_vProcessors[i]->getName() == sArgumentName) {
+            return true;
+        }
+    }
+
+    for (int i = 0; i < m_vSingleArguments.size(); i++) {
+        if (m_vSingleArguments[i]->getName() == sArgumentName) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// ---------------------------------------------------------------------
+
+std::string WSJCppArgumentProcessor::help(const std::string &sProgramName, const std::string &sPrefix) {
+    std::string sRet = "";
+    if (m_vSingleArguments.size() > 0 || m_vParameterArguments.size()) {
+        sRet += "\r\n" + sPrefix + "Arguments: \r\n";
+
+        for (int i = 0; i < m_vSingleArguments.size(); i++) {
+            sRet += m_vSingleArguments[i]->help(sProgramName, sPrefix + "  ") + " \r\n";
+        }
+
+        for (int i = 0; i < m_vParameterArguments.size(); i++) {
+            sRet += m_vParameterArguments[i]->help(sProgramName, sPrefix + "  ") + " \r\n";
+        }
+    }
+
+    if (m_vProcessors.size() > 0) {
+        sRet += "\r\n" + sPrefix + "Commands: \r\n";
+        for (int i = 0; i < m_vProcessors.size(); i++) {
+            WSJCppArgumentProcessor *p = m_vProcessors[i];
+            // TODO need a previous Processors
+            sRet += sPrefix + "  " + sProgramName + " <params> " + p->getName() + " - " + p->getDescription() + "\r\n";
+            sRet += p->help(sProgramName, sPrefix + "  ");
+        }
+    }
+
+    sRet += "\r\n"; // TODO
+    return sRet;
+}
+
+// ---------------------------------------------------------------------
+
+WSJCppArguments::WSJCppArguments(int argc, const char* argv[], WSJCppArgumentProcessor *pRoot) {
     TAG = "WSJCppArguments";
     for (int i = 0; i < argc; i++) {
         m_vArguments.push_back(std::string(argv[i]));
     }
     m_sProgramName = m_vArguments[0];
     m_vArguments.erase(m_vArguments.begin());
-    m_pRoot = new WSJCppArgumentProcessor(m_sProgramName, "");
+    m_pRoot = pRoot;
 }
 
 // ---------------------------------------------------------------------
 
-int WSJCppArguments::handle() {
-    WSJCppArgumentProcessor *pArgumentProcessor = m_pRoot->findProcessor(m_vArguments);
-    if (pArgumentProcessor != nullptr) {
-        return pArgumentProcessor->handle(m_sProgramName, m_vArguments);    
+int WSJCppArguments::exec() {
+    if (m_pRoot == nullptr) {
+        WSJCppLog::throw_err(TAG, "Root could not be nullptr");
     }
-    WSJCppLog::err(TAG, "Not found argument processor");
-    return -1;
+    std::vector<std::string> vArgs(m_vArguments);
+    return this->recursiveExec(m_pRoot, vArgs);
 }
 
 // ---------------------------------------------------------------------
 
-bool WSJCppArguments::canHandle() {
-    WSJCppArgumentProcessor *pArgumentProcessor = m_pRoot->findProcessor(m_vArguments);
-    return pArgumentProcessor != nullptr;
+int WSJCppArguments::recursiveExec(WSJCppArgumentProcessor *pArgumentProcessor, std::vector<std::string> &vSubArguments) {
+    
+    std::vector<WSJCppArgumentSingle *> vSingleArguments;
+    std::vector<WSJCppArgumentParameter *> vParameterArguments;
+    vSubArguments = extractSingleAndParameterArguments(pArgumentProcessor, vSubArguments, vSingleArguments, vParameterArguments);
+
+    // apply single arguments
+    for (int i = 0; i < vSingleArguments.size(); i++) {
+        WSJCppArgumentSingle *p = vSingleArguments[i];
+        if (!pArgumentProcessor->applySingleArgument(m_sProgramName, p->getName())) {
+            WSJCppLog::err(TAG, "Could not apply single argument '" + p->getName() + "' ");
+            return -1;
+        }
+    }
+
+    // apply parameter arguments
+    for (int i = 0; i < vParameterArguments.size(); i++) {
+        WSJCppArgumentParameter *p = vParameterArguments[i];
+        if (!pArgumentProcessor->applyParameterArgument(m_sProgramName, p->getName(), p->getValue())) {
+            WSJCppLog::err(TAG, "Could not apply parameter argument '" + p->getName() + "' for '" + pArgumentProcessor->getName() + "'");
+            return -1;
+        }
+    }
+
+    if (vSubArguments.size() == 0) {
+        WSJCppLog::throw_err(TAG, "Could not find processor for execute with empty name");
+    }
+
+    WSJCppArgumentProcessor *pNextProcessor = pArgumentProcessor->findRegisteredProcessor(vSubArguments[0]);
+    if (pNextProcessor != nullptr) {
+        vSubArguments.erase(vSubArguments.begin());
+        return this->recursiveExec(pNextProcessor, vSubArguments);
+    }
+    return pArgumentProcessor->exec(m_sProgramName, vSubArguments);
 }
 
 // ---------------------------------------------------------------------
 
-WSJCppArgumentProcessor &WSJCppArguments::getRoot() {
-    return *m_pRoot;
+std::vector<std::string> WSJCppArguments::extractSingleAndParameterArguments(
+    WSJCppArgumentProcessor *pArgumentProcessor, 
+    const std::vector<std::string> &vArguments,
+    std::vector<WSJCppArgumentSingle *> &vSingleArguments,
+    std::vector<WSJCppArgumentParameter *> &vParameterArguments
+) {
+    std::vector<std::string> vArgs(vArguments);
+    bool bFound = true;
+    while (bFound) {
+        bFound = false;
+        if (vArgs.size() > 0) {
+            std::string sFirst = vArgs[0];
+            WSJCppArgumentSingle *pSingle = pArgumentProcessor->findRegisteredSingleArgument(sFirst);
+            WSJCppArgumentParameter *pParameter = pArgumentProcessor->findRegisteredParameterArgument(sFirst);
+            if (pSingle != nullptr) {
+                vArgs.erase(vArgs.begin());
+                bFound = true;
+                vSingleArguments.push_back(pSingle);
+            } else if (pParameter != nullptr) {
+                bFound = true;
+                vParameterArguments.push_back(pParameter);
+                vArgs.erase(vArgs.begin());
+                if (vArgs.size() == 0) {
+                    WSJCppLog::throw_err(TAG, "Expected value for '" + pParameter->getName() + "'");
+                } else {
+                    pParameter->setValue(vArgs[0]);
+                    vArgs.erase(vArgs.begin());
+                }
+            }
+        }
+    }
+    return vArgs;
 }
 
 // ---------------------------------------------------------------------
 
 std::string WSJCppArguments::help() {
-    return m_pRoot->help(m_sProgramName, "");
+    std::string sRet = "\r\n";
+    sRet += "Usage: " + m_sProgramName + " <arguments> [<command> <arguments>] ... [<subcommand> <arguments>]\r\n\r\n";
+    sRet += "    " + m_pRoot->getDescription() + "\r\n";
+
+    return sRet + m_pRoot->help(m_sProgramName, "  ");
 }
 
 // ---------------------------------------------------------------------

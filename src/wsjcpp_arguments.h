@@ -5,6 +5,37 @@
 #include <vector>
 #include <map>
 
+class WSJCppArgumentSingle {
+    public:
+        WSJCppArgumentSingle(const std::string &sName, const std::string &sDescription);
+        std::string getName();
+        std::string getDescription();
+        std::string help(const std::string &sProgramName, const std::string &sPrefix);
+
+    private:
+        std::string TAG;
+        std::string m_sName;
+        std::string m_sDescription;
+};
+
+// ---------------------------------------------------------------------
+
+class WSJCppArgumentParameter {
+    public:
+        WSJCppArgumentParameter(const std::string &sName, const std::string &sDescription);
+        std::string getName();
+        std::string getDescription();
+        std::string getValue();
+        void setValue(const std::string &sValue);
+        std::string help(const std::string &sProgramName, const std::string &sPrefix);
+
+    private:
+        std::string TAG;
+        std::string m_sName;
+        std::string m_sValue;
+        std::string m_sDescription;
+};
+
 // ---------------------------------------------------------------------
 
 class WSJCppArgumentProcessor {
@@ -15,41 +46,62 @@ class WSJCppArgumentProcessor {
 
         void registryProcessor(WSJCppArgumentProcessor *p);
         void registrySingleArgument(const std::string &sArgumentName, const std::string &sDescription);
-        void registryParamArgument(const std::string &sArgumentName, const std::string &sDescription);
-        
+        void registryParameterArgument(const std::string &sArgumentName, const std::string &sDescription);
+        WSJCppArgumentProcessor *findRegisteredProcessor(const std::string &sArgumentName);
+        WSJCppArgumentSingle *findRegisteredSingleArgument(const std::string &sArgumentName);
+        WSJCppArgumentParameter *findRegisteredParameterArgument(const std::string &sArgumentName);
+
+        bool hasRegisteredArgumentName(const std::string &sArgumentName);
+
         std::string help(const std::string &sProgramName, const std::string &sPrefix);
-
-        WSJCppArgumentProcessor *findProcessor(const std::vector<std::string> &vSubParams);
         
-
-        bool hasSingleArgument(const std::string &sArgumentName);
         bool getValueOfParam(const std::string &sArgumentName);
-        bool hasParamArgument(const std::string &sArgumentName, const std::string &sDescription);
-        
-        
-        virtual int handle(const std::string &sProgramName, const std::vector<std::string> &vSubParams);
-        virtual bool canHandle(const std::vector<std::string> &vSubParams);
+
+        virtual bool applySingleArgument(const std::string &sProgramName, const std::string &sArgumentName) = 0;
+        virtual bool applyParameterArgument(const std::string &sProgramName, const std::string &sArgumentName, const std::string &sValue) = 0;
+        virtual int exec(const std::string &sProgramName, const std::vector<std::string> &vSubParams) = 0;
+
     private:
         std::string TAG;
         std::string m_sName;
         std::string m_sDescription;
         std::vector<WSJCppArgumentProcessor *> m_vProcessors;
-        std::map<std::string, std::string> m_vSingleArguments;
-        std::map<std::string, std::string> m_vParamArguments;
+        std::vector<WSJCppArgumentSingle *> m_vSingleArguments;
+        std::vector<WSJCppArgumentParameter *> m_vParameterArguments;
 };
+
+// ---------------------------------------------------------------------
+
+class WSJCppArgumentsSpliter {
+    public:
+        WSJCppArgumentsSpliter(WSJCppArgumentProcessor *pArgumentProcessor, const std::vector<std::string> &vParams);
+        std::vector<std::string> getSingleAgruments();
+        std::vector<std::string> getParamsArguments();
+
+    private:
+        std::vector<std::string> m_vOriginalParams;
+        std::vector<std::string> m_vSingleArguments;
+        std::vector<std::string> m_vParamsArguments;
+};
+
 
 // ---------------------------------------------------------------------
 
 class WSJCppArguments {
     public:
-        WSJCppArguments(int argc, const char* argv[]);
-        int handle();
-        bool canHandle();
+        WSJCppArguments(int argc, const char* argv[], WSJCppArgumentProcessor *pRoot);
+        int exec();
         std::string help();
-        WSJCppArgumentProcessor &getRoot();
 
     private:
         WSJCppArgumentProcessor *m_pRoot;
+        std::vector<std::string> extractSingleAndParameterArguments(
+            WSJCppArgumentProcessor *pArgumentProcessor, 
+            const std::vector<std::string> &vArguments,
+            std::vector<WSJCppArgumentSingle *> &vSingleArguments,
+            std::vector<WSJCppArgumentParameter *> &vParameterArguments
+        );
+        int recursiveExec(WSJCppArgumentProcessor *pArgumentProcessor, std::vector<std::string> &vSubArguments);
 
         std::string TAG;
         std::vector<std::string> m_vArguments;
