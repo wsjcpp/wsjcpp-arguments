@@ -45,6 +45,7 @@ class WSJCppArgumentProcessor {
         std::string getDescription();
 
         void registryProcessor(WSJCppArgumentProcessor *p);
+        void registryExample(const std::string &sExample);
         void registrySingleArgument(const std::string &sArgumentName, const std::string &sDescription);
         void registryParameterArgument(const std::string &sArgumentName, const std::string &sDescription);
         WSJCppArgumentProcessor *findRegisteredProcessor(const std::string &sArgumentName);
@@ -57,17 +58,20 @@ class WSJCppArgumentProcessor {
         
         bool getValueOfParam(const std::string &sArgumentName);
 
-        virtual bool applySingleArgument(const std::string &sProgramName, const std::string &sArgumentName) = 0;
-        virtual bool applyParameterArgument(const std::string &sProgramName, const std::string &sArgumentName, const std::string &sValue) = 0;
-        virtual int exec(const std::string &sProgramName, const std::vector<std::string> &vSubParams) = 0;
+        virtual bool applySingleArgument(const std::string &sProgramName, const std::string &sArgumentName);
+        virtual bool applyParameterArgument(const std::string &sProgramName, const std::string &sArgumentName, const std::string &sValue);
+        virtual int exec(const std::string &sProgramName, const std::vector<std::string> &vSubParams);
+
+    protected:
+        std::string TAG;
 
     private:
-        std::string TAG;
         std::string m_sName;
         std::string m_sDescription;
         std::vector<WSJCppArgumentProcessor *> m_vProcessors;
         std::vector<WSJCppArgumentSingle *> m_vSingleArguments;
         std::vector<WSJCppArgumentParameter *> m_vParameterArguments;
+        std::vector<std::string> m_vExamples;
 };
 
 // ---------------------------------------------------------------------

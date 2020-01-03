@@ -94,6 +94,12 @@ void WSJCppArgumentProcessor::registryProcessor(WSJCppArgumentProcessor *p) {
 
 // ---------------------------------------------------------------------
 
+void WSJCppArgumentProcessor::registryExample(const std::string &sExample) {
+    m_vExamples.push_back(sExample);
+}
+
+// ---------------------------------------------------------------------
+
 void WSJCppArgumentProcessor::registrySingleArgument(const std::string &sArgumentName, const std::string &sDescription) {
     if (hasRegisteredArgumentName(sArgumentName)) {
         WSJCppLog::throw_err(TAG, "Argument Name '" + sArgumentName + "' already registered");
@@ -184,18 +190,49 @@ bool WSJCppArgumentProcessor::hasRegisteredArgumentName(const std::string &sArgu
 
 // ---------------------------------------------------------------------
 
+bool WSJCppArgumentProcessor::applySingleArgument(const std::string &sProgramName, const std::string &sArgumentName) {
+    WSJCppLog::throw_err(TAG, "No support single argument '" + sArgumentName + "'");
+    return false;
+}
+
+// ---------------------------------------------------------------------
+
+bool WSJCppArgumentProcessor::applyParameterArgument(const std::string &sProgramName, const std::string &sArgumentName, const std::string &sValue) {
+    WSJCppLog::throw_err(TAG, "No support parameter argument '" + sArgumentName + "' for '" + getName() + "'");
+    return false;
+}
+
+// ---------------------------------------------------------------------
+
+int WSJCppArgumentProcessor::exec(const std::string &sProgramName, const std::vector<std::string> &vSubParams) {
+    WSJCppLog::throw_err(TAG, "Processor '" + getName() + "' has not implementation");
+    return -1;
+}
+
+// ---------------------------------------------------------------------
+
 std::string WSJCppArgumentProcessor::help(const std::string &sProgramName, const std::string &sPrefix) {
     std::string sRet = "";
+    int nParams = 0;
     if (m_vSingleArguments.size() > 0 || m_vParameterArguments.size()) {
         sRet += "\r\n" + sPrefix + "Arguments: \r\n";
 
         for (int i = 0; i < m_vSingleArguments.size(); i++) {
             sRet += m_vSingleArguments[i]->help(sProgramName, sPrefix + "  ") + " \r\n";
+            nParams++;
         }
 
         for (int i = 0; i < m_vParameterArguments.size(); i++) {
             sRet += m_vParameterArguments[i]->help(sProgramName, sPrefix + "  ") + " \r\n";
+            nParams++;
         }
+    }
+
+    if (m_vExamples.size() > 0) {
+        for (int ei = 0; ei < m_vExamples.size(); ei++) {
+            sRet += sPrefix + "      - example " + std::to_string(ei) + ": " + m_vExamples[ei] + "\r\n";
+        }
+        sRet += "\r\n";
     }
 
     if (m_vProcessors.size() > 0) {
@@ -203,12 +240,20 @@ std::string WSJCppArgumentProcessor::help(const std::string &sProgramName, const
         for (int i = 0; i < m_vProcessors.size(); i++) {
             WSJCppArgumentProcessor *p = m_vProcessors[i];
             // TODO need a previous Processors
-            sRet += sPrefix + "  " + sProgramName + " <params> " + p->getName() + " - " + p->getDescription() + "\r\n";
-            sRet += p->help(sProgramName, sPrefix + "  ");
+
+            std::string sRoute = sProgramName;
+            if (nParams > 0) {
+                sRoute += " <arguments>";
+            }
+            sRoute += " " + p->getName();
+            // TODO: <package-name>
+            sRet += sPrefix + "   " + sRoute + " - " + p->getDescription() + "\r\n";
+            sRet += p->help(sRoute, sPrefix + "   ");
         }
+        sRet += "\r\n";
     }
 
-    sRet += "\r\n"; // TODO
+    // sRet += "\r\n"; // TODO
     return sRet;
 }
 
@@ -260,15 +305,14 @@ int WSJCppArguments::recursiveExec(WSJCppArgumentProcessor *pArgumentProcessor, 
         }
     }
 
-    if (vSubArguments.size() == 0) {
-        WSJCppLog::throw_err(TAG, "Could not find processor for execute with empty name");
+    if (vSubArguments.size() > 0) {
+        WSJCppArgumentProcessor *pNextProcessor = pArgumentProcessor->findRegisteredProcessor(vSubArguments[0]);
+        if (pNextProcessor != nullptr) {
+            vSubArguments.erase(vSubArguments.begin());
+            return this->recursiveExec(pNextProcessor, vSubArguments);
+        }
     }
 
-    WSJCppArgumentProcessor *pNextProcessor = pArgumentProcessor->findRegisteredProcessor(vSubArguments[0]);
-    if (pNextProcessor != nullptr) {
-        vSubArguments.erase(vSubArguments.begin());
-        return this->recursiveExec(pNextProcessor, vSubArguments);
-    }
     return pArgumentProcessor->exec(m_sProgramName, vSubArguments);
 }
 
