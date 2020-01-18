@@ -33,11 +33,11 @@ dependencies:
 distribution:
   - source-file: src/wsjcpp_arguments.cpp
     target-file: wsjcpp_arguments.cpp
-    sha1: "a6d1156597470cabdf368e5733b75a22d8a7fe1f"
+    sha1: "0be6d86b88f63f8aa71481ec4e0a7ee238797338"
     type: "source-code"
   - source-file: src/wsjcpp_arguments.h
     target-file: wsjcpp_arguments.h
-    sha1: "cfc5cce21522378a594a25b11ac61d6a4a3f2863"
+    sha1: "a80e2fe927872112fa68cf87913aaec4ce710acc"
     type: "source-code"
 
 unit-tests:
