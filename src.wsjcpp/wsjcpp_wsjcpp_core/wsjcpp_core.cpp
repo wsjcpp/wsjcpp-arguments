@@ -96,6 +96,34 @@ std::string WSJCppCore::doNormalizePath(const std::string & sPath) {
 
 // ---------------------------------------------------------------------
 
+std::string WSJCppCore::extractFilename(const std::string &sPath) {
+    // split path by /
+    std::vector<std::string> vNames;
+    std::string s = "";
+    int nStrLen = sPath.length();
+    for (int i = 0; i < sPath.length(); i++) {
+        if (sPath[i] == '/') {
+            vNames.push_back(s);
+            s = "";
+            if (i == nStrLen-1) {
+                vNames.push_back("");
+            }
+        } else {
+            s += sPath[i];
+        }
+    }
+    if (s != "") {
+         vNames.push_back(s);
+    }
+    std::string sRet;
+    if (vNames.size() > 0) {
+        sRet = vNames[vNames.size()-1];
+    }
+    return sRet;
+}
+
+// ---------------------------------------------------------------------
+
 std::string WSJCppCore::getCurrentDirectory() {
     char cwd[PATH_MAX];
     if (getcwd(cwd, sizeof(cwd)) == NULL) {
@@ -275,7 +303,7 @@ bool WSJCppCore::makeDir(const std::string &sDirname) {
         std::cout << "FAILED create folder " << sDirname << std::endl;
         return false;
     }
-    std::cout << "nStatus: " << nStatus << std::endl;
+    // std::cout << "nStatus: " << nStatus << std::endl;
     return true;
 }
 
@@ -283,12 +311,12 @@ bool WSJCppCore::makeDir(const std::string &sDirname) {
 
 bool WSJCppCore::writeFile(const std::string &sFilename, const std::string &sContent) {
     
-    std::ofstream f(sFilename, std::ifstream::in);
+    // std::ofstream f(sFilename, std::ifstream::in);
+    std::ofstream f(sFilename, std::ios::out);
     if (!f) {
-        std::cout << "FAILED could not create file to wtite " << sFilename << std::endl;
+        WSJCppLog::err("WSJCppCore", "Could not create file to write '" + sFilename + "'");
         return false;
     }
-
     f << sContent << std::endl;
     f.close();
     return true;
@@ -492,3 +520,5 @@ void WSJCppLog::add(WSJCppColorModifier &clr, const std::string &sType, const st
     logFile << sLogMessage << std::endl;
     logFile.close();
 }
+
+

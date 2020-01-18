@@ -18,7 +18,8 @@ class WSJCppCore {
             const std::string &sLibraryNameForExports
         );
 
-        static std::string doNormalizePath(const std::string & sPath);
+        static std::string doNormalizePath(const std::string &sPath);
+        static std::string extractFilename(const std::string &sPath);
         static std::string getCurrentDirectory();
 
         static long currentTime_milliseconds();
@@ -95,7 +96,6 @@ class WSJCppLog {
         static void ok(const std::string &sTag, const std::string &sMessage);
         static void setLogDirectory(const std::string &sDirectoryPath);
         static void setPrefixLogFile(const std::string &sPrefixLogFile);
-        // static nlohmann::json getLastLogs();
         static void initGlobalVariables();
 
     private:
@@ -103,3 +103,5 @@ class WSJCppLog {
 };
 
 #endif // WSJCPP_CORE_H
+
+
