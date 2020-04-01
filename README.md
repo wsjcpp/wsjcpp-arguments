@@ -2,18 +2,20 @@
 
 [![Build Status](https://api.travis-ci.org/wsjcpp/wsjcpp-arguments.svg?branch=master)](https://travis-ci.org/wsjcpp/wsjcpp-arguments) [![Github Stars](https://img.shields.io/github/stars/wsjcpp/wsjcpp-arguments.svg?label=github%20%E2%98%85)](https://github.com/wsjcpp/wsjcpp-arguments/stargazers) [![Github Stars](https://img.shields.io/github/contributors/wsjcpp/wsjcpp-arguments.svg)](https://github.com/wsjcpp/wsjcpp-arguments/) [![Github Forks](https://img.shields.io/github/forks/wsjcpp/wsjcpp-arguments.svg?label=github%20forks)](https://github.com/wsjcpp/wsjcpp-arguments/network/members)
 
-Helpful parser for parsing application arguments
+Parsing and handling for application arguments
 
-## Installing
+## Intagrate to your project
 
 ```
 wsjcpp install "https://github.com/wsjcpp/wsjcpp-arguments:master"
 ```
 
-or specify version:
-```
-wsjcpp install "https://github.com/wsjcpp/wsjcpp-arguments:v0.0.1"
-```
+or include this files:
+
+* src.wsjcpp/wsjcpp_core/wsjcpp_core.h
+* src.wsjcpp/wsjcpp_core/wsjcpp_core.cpp
+* src/wsjcpp_arguments.cpp
+* src/wsjcpp_arguments.h
 
 ## Example usage
 
@@ -86,7 +88,7 @@ usage:
 #include "argument_processor_main.h"
 
 
-int main() {
+int main(int argc, const char* argv[]) {
     ArgumentProcessorMain *pMain = new ArgumentProcessorMain();
     WSJCppArguments prog(argc, argv, pMain);
 
