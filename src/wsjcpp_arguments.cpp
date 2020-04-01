@@ -65,28 +65,32 @@ std::string WSJCppArgumentParameter::help(const std::string &sProgramName, const
 
 // ---------------------------------------------------------------------
 
-WSJCppArgumentProcessor::WSJCppArgumentProcessor(const std::string &sName, const std::string &sDescription) {
-    TAG = "WSJCppArgumentProcessor-" + sName;
-    m_sName = sName;
-    m_sDescription = sDescription;
-}
-
-// ---------------------------------------------------------------------
-
 WSJCppArgumentProcessor::WSJCppArgumentProcessor(const std::vector<std::string> &vNames, const std::string &sDescription) {
     if (vNames.size() < 1) {
         WSJCppLog::throw_err(TAG, "Names must have 1 or more values for '" + sDescription + "'");
     }
-    std::string sName = vNames[0];
-    TAG = "WSJCppArgumentProcessor-" + sName;
-    m_sName = sName;
+    m_vNames = vNames;
+    TAG = "WSJCppArgumentProcessor-" + this->getNamesAsString();
     m_sDescription = sDescription;
 }
 
 // ---------------------------------------------------------------------
 
-std::string WSJCppArgumentProcessor::getName() {
-    return m_sName;
+const std::vector<std::string> &WSJCppArgumentProcessor::getNames() {
+    return m_vNames;
+}
+
+// ---------------------------------------------------------------------
+
+std::string WSJCppArgumentProcessor::getNamesAsString() {
+    std::string sRet;
+    for (int i = 0; i < m_vNames.size(); i++) {
+        if (sRet.size() > 0) {
+            sRet += "|";
+        }
+        sRet += m_vNames[i];
+    }
+    return sRet;
 }
 
 // ---------------------------------------------------------------------
@@ -98,8 +102,11 @@ std::string WSJCppArgumentProcessor::getDescription() {
 // ---------------------------------------------------------------------
 
 void WSJCppArgumentProcessor::registryProcessor(WSJCppArgumentProcessor *p) {
-    if (hasRegisteredArgumentName(p->getName())) {
-        WSJCppLog::throw_err(TAG, "Argument Name '" + p->getName() + "' already registered");
+    for (int i = 0; i < m_vNames.size(); i++) {
+        std::string sName = m_vNames[i];
+        if (hasRegisteredArgumentName(sName)) {
+            WSJCppLog::throw_err(TAG, "Argument Name '" + sName + "' already registered");
+        }
     }
     m_vProcessors.push_back(p);
 }
@@ -166,11 +173,14 @@ WSJCppArgumentParameter *WSJCppArgumentProcessor::findRegisteredParameterArgumen
 WSJCppArgumentProcessor *WSJCppArgumentProcessor::findRegisteredProcessor(const std::string &sArgumentName) {
     WSJCppArgumentProcessor *pRet = nullptr;
     for (int i = 0; i < m_vProcessors.size(); i++) {
-        if (m_vProcessors[i]->getName() == sArgumentName) {
-            if (pRet == nullptr) {
-                pRet = m_vProcessors[i];
-            } else {
-                WSJCppLog::throw_err(TAG, "Several processors can handle this arguments");
+        std::vector<std::string> vNames = m_vProcessors[i]->getNames();
+        for (int n = 0; n < vNames.size(); n++) {
+            if (vNames[n] == sArgumentName) {
+                if (pRet == nullptr) {
+                    pRet = m_vProcessors[i];
+                } else {
+                    WSJCppLog::throw_err(TAG, "Several processors can handle this arguments");
+                }
             }
         }
     }
@@ -187,9 +197,13 @@ bool WSJCppArgumentProcessor::hasRegisteredArgumentName(const std::string &sArgu
     }
 
     for (int i = 0; i < m_vProcessors.size(); i++) {
-        if (m_vProcessors[i]->getName() == sArgumentName) {
-            return true;
+        std::vector<std::string> vNames = m_vProcessors[i]->getNames();
+        for (int n = 0; n < vNames.size(); n++) {
+            if (vNames[n] == sArgumentName) {
+                return true;
+            }
         }
+        
     }
 
     for (int i = 0; i < m_vSingleArguments.size(); i++) {
@@ -210,14 +224,14 @@ bool WSJCppArgumentProcessor::applySingleArgument(const std::string &sProgramNam
 // ---------------------------------------------------------------------
 
 bool WSJCppArgumentProcessor::applyParameterArgument(const std::string &sProgramName, const std::string &sArgumentName, const std::string &sValue) {
-    WSJCppLog::throw_err(TAG, "No support parameter argument '" + sArgumentName + "' for '" + getName() + "'");
+    WSJCppLog::throw_err(TAG, "No support parameter argument '" + sArgumentName + "' for '" + getNamesAsString() + "'");
     return false;
 }
 
 // ---------------------------------------------------------------------
 
 int WSJCppArgumentProcessor::exec(const std::string &sProgramName, const std::vector<std::string> &vSubParams) {
-    WSJCppLog::throw_err(TAG, "Processor '" + getName() + "' has not implementation");
+    WSJCppLog::throw_err(TAG, "Processor '" + getNamesAsString() + "' has not implementation");
     return -1;
 }
 
@@ -257,7 +271,7 @@ std::string WSJCppArgumentProcessor::help(const std::string &sProgramName, const
             if (nParams > 0) {
                 sRoute += " <arguments>";
             }
-            sRoute += " " + p->getName();
+            sRoute += " " + p->getNamesAsString();
             // TODO: <package-name>
             sRet += sPrefix + "   " + sRoute + " - " + p->getDescription() + "\r\n";
             sRet += p->help(sRoute, sPrefix + "   ");
@@ -318,7 +332,7 @@ int WSJCppArguments::recursiveExec(WSJCppArgumentProcessor *pArgumentProcessor, 
     for (int i = 0; i < vParameterArguments.size(); i++) {
         WSJCppArgumentParameter *p = vParameterArguments[i];
         if (!pArgumentProcessor->applyParameterArgument(m_sProgramName, p->getName(), p->getValue())) {
-            WSJCppLog::err(TAG, "Could not apply parameter argument '" + p->getName() + "' for '" + pArgumentProcessor->getName() + "'");
+            WSJCppLog::err(TAG, "Could not apply parameter argument '" + p->getName() + "' for '" + pArgumentProcessor->getNamesAsString() + "'");
             return -1;
         }
     }

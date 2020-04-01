@@ -37,7 +37,7 @@ class ArgumentProcessorInstall : public WSJCppArgumentProcessor {
 // ---------------------------------------------------------------------
 
 ArgumentProcessorInstall::ArgumentProcessorInstall() 
- : WSJCppArgumentProcessor("install", "install something") {
+ : WSJCppArgumentProcessor({"install", "i"}, "install something") {
     TAG = "ArgumentProcessorInstall";
 
     registrySingleArgument("--silent", "Silent");
@@ -101,7 +101,7 @@ class ArgumentProcessorProgram1 : public WSJCppArgumentProcessor {
 // ---------------------------------------------------------------------
 
 ArgumentProcessorProgram1::ArgumentProcessorProgram1() 
-    : WSJCppArgumentProcessor("program1", "Program for unit-tests") {
+    : WSJCppArgumentProcessor({"program1"}, "Program for unit-tests") {
     TAG = "ArgumentProcessorProgram1";
     registrySingleArgument("--hello", "Hello argument");
     registrySingleArgument("--hello2", "Hello2 argument");
@@ -221,6 +221,27 @@ bool UnitTestSimpleArguments::run() {
     compareS(bTestSuccess, "args2 argument 2", pProgram1->vParams[0], "arg1");
     compareS(bTestSuccess, "args2 argument 2", pProgram1->vParams[1], "arg2");
     
+    pProgram1->reset();
+
+    const int argc3 = 6;
+    const char *argv3[argc3] = {"./program", "--hello", "i", "--silent", "some1", "some2"};
+    
+    WSJCppArguments args3(argc3, argv3, pProgram1);
+    compareN(bTestSuccess, "args3 exec", args3.exec(), 0);
+
+    compareB(bTestSuccess, "args3 --hello", pProgram1->hello, true);
+    compareB(bTestSuccess, "args3 --hello2", pProgram1->hello2, false);
+    compareB(bTestSuccess, "args3 --hello3", pProgram1->hello3, false);
+
+    compareS(bTestSuccess, "args3 -param1", pProgram1->param1, "");
+    compareS(bTestSuccess, "args3 -param2", pProgram1->param2, "");
+
+    compareB(bTestSuccess, "args3 install --silent", pProgram1->pInstall->silent, true);
+    compareN(bTestSuccess, "args3 install arguments size", pProgram1->pInstall->vParams.size(), 2);
+    compareS(bTestSuccess, "args3 install argument 1", pProgram1->pInstall->vParams[0], "some1");
+    compareS(bTestSuccess, "args3 install argument 2", pProgram1->pInstall->vParams[1], "some2");
+
+
     WSJCppLog::info(TAG, "\r\n" + args2.help());
 
     return bTestSuccess;

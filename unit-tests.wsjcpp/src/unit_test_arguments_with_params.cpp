@@ -16,7 +16,7 @@ UnitTestArgumentsWithParams::UnitTestArgumentsWithParams()
 
 class ArgumentProcessorUninstall : public WSJCppArgumentProcessor {
     public:
-        ArgumentProcessorUninstall() : WSJCppArgumentProcessor("uninstall", "uninstall something") {
+        ArgumentProcessorUninstall() : WSJCppArgumentProcessor({"uninstall"}, "uninstall something") {
             TAG = "ArgumentProcessorUninstall";
         };
 

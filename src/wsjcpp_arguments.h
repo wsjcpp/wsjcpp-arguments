@@ -40,9 +40,9 @@ class WSJCppArgumentParameter {
 
 class WSJCppArgumentProcessor {
     public:
-        WSJCppArgumentProcessor(const std::string &sName, const std::string &sDescription);
         WSJCppArgumentProcessor(const std::vector<std::string> &vNames, const std::string &sDescription);
-        std::string getName();
+        const std::vector<std::string> &getNames();
+        std::string getNamesAsString();
         std::string getDescription();
 
         void registryProcessor(WSJCppArgumentProcessor *p);
@@ -67,8 +67,7 @@ class WSJCppArgumentProcessor {
         std::string TAG;
 
     private:
-        std::string m_sName;
-        std::vector<std::string> vNames;
+        std::vector<std::string> m_vNames;
         std::string m_sDescription;
         std::vector<WSJCppArgumentProcessor *> m_vProcessors;
         std::vector<WSJCppArgumentSingle *> m_vSingleArguments;

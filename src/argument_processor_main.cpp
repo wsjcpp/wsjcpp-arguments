@@ -6,8 +6,8 @@
 // ArgumentProcessorMain
 
 ArgumentProcessorMain::ArgumentProcessorMain() 
-: WSJCppArgumentProcessor("main", "TODO description") {
-    TAG = "main";
+: WSJCppArgumentProcessor({"main"}, "TODO description") {
+    TAG = "ArgumentProcessorMain";
     // registrySingleArgument("--single", "What exactly do this single param?");
     // registryParameterArgument("-param", "What need this param?");
     // registryExample("here example of command");
