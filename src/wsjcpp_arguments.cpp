@@ -272,13 +272,19 @@ std::string WSJCppArgumentProcessor::help(const std::string &sProgramName, const
 // ---------------------------------------------------------------------
 
 WSJCppArguments::WSJCppArguments(int argc, const char* argv[], WSJCppArgumentProcessor *pRoot) {
-    TAG = "WSJCppArguments";
+    TAG = "WsjcppArguments";
     for (int i = 0; i < argc; i++) {
         m_vArguments.push_back(std::string(argv[i]));
     }
     m_sProgramName = m_vArguments[0];
     m_vArguments.erase(m_vArguments.begin());
     m_pRoot = pRoot;
+}
+
+// ---------------------------------------------------------------------
+
+WSJCppArguments::~WSJCppArguments() {
+    // TODO
 }
 
 // ---------------------------------------------------------------------

@@ -1,14 +1,12 @@
 #include "unit_test_simple_arguments.h"
 #include <vector>
-#include <iostream>
 #include <wsjcpp_core.h>
 #include <wsjcpp_arguments.h>
 
 REGISTRY_UNIT_TEST(UnitTestSimpleArguments)
 
 UnitTestSimpleArguments::UnitTestSimpleArguments()
-    : UnitTestBase("UnitTestSimpleArguments") {
-    //
+    : WSJCppUnitTestBase("UnitTestSimpleArguments") {
 }
 
 // ---------------------------------------------------------------------
@@ -16,6 +14,7 @@ UnitTestSimpleArguments::UnitTestSimpleArguments()
 void UnitTestSimpleArguments::init() {
     // nothing
 }
+
 
 // ---------------------------------------------------------------------
 
@@ -226,3 +225,4 @@ bool UnitTestSimpleArguments::run() {
 
     return bTestSuccess;
 }
+

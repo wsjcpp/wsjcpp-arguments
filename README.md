@@ -15,5 +15,87 @@ or specify version:
 wsjcpp install "https://github.com/wsjcpp/wsjcpp-arguments:v0.0.1"
 ```
 
+## Example usage
+
+header `argument_processor_test_program.h`:
+```
+#ifndef ARGUMENT_PROCESSOR_MAIN_H
+#define ARGUMENT_PROCESSOR_MAIN_H
+
+#include <wsjcpp_arguments.h>
+
+class ArgumentProcessorMain : public WSJCppArgumentProcessor {
+    public:
+        ArgumentProcessorMain();
+
+        virtual bool applyParameterArgument(const std::string &sProgramName, const std::string &sArgumentName, const std::string &sValue);
+        virtual bool applySingleArgument(const std::string &sProgramName, const std::string &sArgumentName);
+        virtual int exec(const std::string &sProgramName, const std::vector<std::string> &vSubParams);
+};
+
+#endif // ARGUMENT_PROCESSOR_MAIN_H
+``` 
+
+source-code `argument_processor_main.cpp`:
+
+```
+#include "argument_processor_main.h"
+#include <wsjcpp_core.h>
+
+// ---------------------------------------------------------------------
+// ArgumentProcessorMain
+
+ArgumentProcessorMain::ArgumentProcessorMain() 
+: WSJCppArgumentProcessor("test_program", "TODO description") {
+    TAG = "ArgumentProcessorMain";
+    // registrySingleArgument("--single", "What exactly do this single param?");
+    // registryParameterArgument("-param", "What need this param?");
+    // registryExample("here example of command");
+    // registryProcessor(new ArgumentProcessorOtherProcessor());
+}
+
+// ---------------------------------------------------------------------
+
+bool ArgumentProcessorMain::applySingleArgument(const std::string &sProgramName, const std::string &sArgumentName) {
+    WSJCppLog::err(TAG, "Not implemented");
+    return false;
+}
+
+// ---------------------------------------------------------------------
+
+bool ArgumentProcessorMain::applyParameterArgument(
+    const std::string &sProgramName, 
+    const std::string &sArgumentName, 
+    const std::string &sValue
+) {
+    WSJCppLog::err(TAG, "Not implemented");
+    return false;
+}
+
+// ---------------------------------------------------------------------
+
+int ArgumentProcessorMain::exec(const std::string &sProgramName, const std::vector<std::string> &vSubParams) {
+    WSJCppLog::err(TAG, "Not implemented");
+    return -1; 
+}
+```
+
+usage:
+```
+#include <wsjcpp_arguments.h>
+#include "argument_processor_main.h"
 
 
+int main() {
+    ArgumentProcessorMain *pMain = new ArgumentProcessorMain();
+    WSJCppArguments prog(argc, argv, pMain);
+
+    int nResult = prog.exec();
+    if (nResult != 0) {
+        // print help
+        std::cout << "Try exec help" << std::endl;
+        std::cout << prog.help();
+    }
+    return nResult;
+}
+```

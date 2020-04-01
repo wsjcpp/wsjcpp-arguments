@@ -16,6 +16,9 @@
 #include <cstdint>
 #include <unistd.h>
 #include <streambuf>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
 
 // ---------------------------------------------------------------------
 
@@ -342,6 +345,33 @@ bool WSJCppCore::readTextFile(const std::string &sFilename, std::string &sConten
 
 // ---------------------------------------------------------------------
 
+bool WSJCppCore::readFileToBuffer(const std::string &sFilename, char *pBuffer[], int &nBufferSize) {
+    std::ifstream f(sFilename, std::ifstream::binary);
+    if (!f) {
+        return false;
+    }
+
+    // get length of file:
+    f.seekg (0, f.end);
+    nBufferSize = f.tellg();
+    f.seekg (0, f.beg);
+
+    *pBuffer = new char [nBufferSize];
+
+    // read data as a block:
+    f.read (*pBuffer, nBufferSize);
+    if (!f) {
+        WSJCppLog::err("WSJCppCore::readFileToBuffer", "Only " + std::to_string(f.gcount()) + " could be read");
+        delete[] pBuffer;
+        f.close();
+        return false;
+    }
+    f.close();
+    return true;
+}
+
+// ---------------------------------------------------------------------
+
 bool WSJCppCore::writeFile(const std::string &sFilename, const char *pBuffer, const int nBufferSize) {
     std::ofstream f(sFilename, std::ios::out | std::ios::binary);
     if (!f) {
@@ -353,7 +383,26 @@ bool WSJCppCore::writeFile(const std::string &sFilename, const char *pBuffer, co
     return true;
 }
 
+// ---------------------------------------------------------------------
 
+bool WSJCppCore::removeFile(const std::string &sFilename) {
+    return remove(sFilename.c_str()) == 0;
+}
+
+// ---------------------------------------------------------------------
+
+bool WSJCppCore::createEmptyFile(const std::string &sFilename) {
+    if (WSJCppCore::fileExists(sFilename)) {
+        return false;
+    }
+    std::ofstream f(sFilename, std::ios::out | std::ios::binary);
+    if (!f) {
+        std::cout << "FAILED could not create file to wtite " << sFilename << std::endl;
+        return false;
+    }
+    f.close();
+    return true;
+}
 
 // ---------------------------------------------------------------------
 
@@ -376,12 +425,60 @@ std::string& WSJCppCore::trim(std::string& str, const std::string& chars) {
 }
 
 // ---------------------------------------------------------------------
+// will worked only with latin
 
-std::string& WSJCppCore::to_lower(std::string& str) {
-    std::transform(str.begin(), str.end(), str.begin(), ::tolower);
-    return str;
+std::string WSJCppCore::toLower(const std::string& str) {
+    std::string sRet = str;
+    std::transform(sRet.begin(), sRet.end(), sRet.begin(), ::tolower);
+    return sRet;
 }
 
+// ---------------------------------------------------------------------
+// will worked only with latin
+
+std::string WSJCppCore::toUpper(const std::string& str) {
+    std::string sRet = str;
+    std::transform(sRet.begin(), sRet.end(), sRet.begin(), ::toupper);
+    return sRet;
+}
+
+// ---------------------------------------------------------------------
+
+void WSJCppCore::replaceAll(std::string& str, const std::string& sFrom, const std::string& sTo) {
+    if (sFrom.empty()) {
+        return;
+    }
+    size_t start_pos = 0;
+    while ((start_pos = str.find(sFrom, start_pos)) != std::string::npos) {
+        str.replace(start_pos, sFrom.length(), sTo);
+        start_pos += sTo.length(); // In case 'to' contains 'sFrom', like replacing 'x' with 'yx'
+    }
+}
+
+// ---------------------------------------------------------------------
+
+std::vector<std::string> WSJCppCore::split(const std::string& sWhat, const std::string& sDelim) {
+    std::vector<std::string> vRet;
+    int nPos = 0;
+    int nLen = sWhat.length();
+    int nDelimLen = sDelim.length();
+    while (nPos < nLen) {
+        std::size_t nFoundPos = sWhat.find(sDelim, nPos);
+        if (nFoundPos != std::string::npos) {
+            std::string sToken = sWhat.substr(nPos, nFoundPos - nPos);
+            vRet.push_back(sToken);
+            nPos = nFoundPos + nDelimLen;
+            if (nFoundPos + nDelimLen == nLen) { // last delimiter
+                vRet.push_back("");
+            }
+        } else {
+            std::string sToken = sWhat.substr(nPos, nLen - nPos);
+            vRet.push_back(sToken);
+            break;
+        }
+    }
+    return vRet;
+}
 
 // ---------------------------------------------------------------------
 
@@ -401,6 +498,100 @@ std::string WSJCppCore::createUuid() {
         }
     }
     // Fallen::initRandom();
+    return sRet;
+}
+
+// ---------------------------------------------------------------------
+
+std::string WSJCppCore::uint2hexString(unsigned int n) {
+    std::string sRet;
+    for (int i = 0; i < 8; i++) {
+        sRet += "0123456789abcdef"[n % 16];
+        n >>= 4;
+    }
+    return std::string(sRet.rbegin(), sRet.rend());
+}
+
+// ---------------------------------------------------------------------
+
+unsigned long WSJCppCore::convertVoidToULong(void *p) {
+    std::uintptr_t ret = reinterpret_cast<std::uintptr_t>(p);
+    return (unsigned long)ret;
+}
+
+// ---------------------------------------------------------------------
+
+std::string WSJCppCore::getPointerAsHex(void *p) {
+    std::uintptr_t i = reinterpret_cast<std::uintptr_t>(p);
+    std::stringstream stream;
+    stream << std::hex << i;
+    return "0x" + std::string(stream.str());
+}
+
+// ---------------------------------------------------------------------
+
+std::string WSJCppCore::extractURLProtocol(const std::string& sValue) {
+    std::string sRet = "";
+    int nPosProtocol = sValue.find("://");
+    if (nPosProtocol == std::string::npos) {
+        return sRet;
+    }
+    sRet = sValue.substr(0, nPosProtocol);
+    return sRet;
+}
+
+// ---------------------------------------------------------------------
+
+bool WSJCppCore::getEnv(const std::string& sName, std::string& sValue) {
+    if (const char* env_p = std::getenv(sName.c_str())) {
+        sValue = std::string(env_p);
+        return true;
+    }
+    return false;
+}
+
+// ---------------------------------------------------------------------
+
+std::string WSJCppCore::encodeUriComponent(const std::string& sValue) {
+    std::stringstream ssRet;
+    for (int i = 0; i < sValue.length(); i++) {
+        char c = sValue[i];
+        if (
+            c == '-' || c == '_' || c == '.' || c == '!'
+            || c == '~' || c == '*' || c == '\'' 
+            || c == '(' || c == ')' || (c >= '0' && c <= '9') 
+            || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
+        ) {
+            ssRet << c;
+        } else {
+            ssRet << '%' << std::uppercase << std::hex << (int)c;
+        }
+    }
+    return ssRet.str();
+}
+
+// ---------------------------------------------------------------------
+
+std::string WSJCppCore::decodeUriComponent(const std::string& sValue) {
+    std::string sRet = "";
+    std::string sHex = "";
+    int nLen = sValue.length();
+    for (int i = 0; i < sValue.length(); i++) {
+        char c = sValue[i];
+        if (c == '%') {
+            if (i+2 >= nLen) {
+                WSJCppLog::throw_err("WSJCppCore::decodeUriElement", "Wrong format of string");
+            }
+            sHex = "0x";
+            sHex += sValue[i+1];
+            sHex += sValue[i+2];
+            i = i + 2;
+            char c1 = std::stoul(sHex, nullptr, 16);
+            sRet += c1;
+        } else {
+            sRet += c;
+        }
+    }
     return sRet;
 }
 
@@ -462,6 +653,18 @@ void WSJCppLog::warn(const std::string & sTag, const std::string &sMessage) {
 void WSJCppLog::ok(const std::string &sTag, const std::string &sMessage) {
     WSJCppColorModifier green(WSJCppColorCode::FG_GREEN);
     WSJCppLog::add(green, "OK", sTag, sMessage);
+}
+
+// ---------------------------------------------------------------------
+
+std::vector<std::string> WSJCppLog::getLastLogMessages() {
+    WSJCppLog::initGlobalVariables();
+    std::lock_guard<std::mutex> lock(*WSJCppLog::g_WSJCPP_LOG_MUTEX);
+    std::vector<std::string> vRet;
+    for (int i = 0; i < g_WSJCPP_LOG_LAST_MESSAGES->size(); i++) {
+        vRet.push_back(g_WSJCPP_LOG_LAST_MESSAGES->at(i));
+    }
+    return vRet;
 }
 
 // ---------------------------------------------------------------------

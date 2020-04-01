@@ -1,21 +1,16 @@
 #include "unit_test_arguments_with_params.h"
 #include <vector>
-#include <iostream>
 #include <wsjcpp_core.h>
 #include <wsjcpp_arguments.h>
 
 REGISTRY_UNIT_TEST(UnitTestArgumentsWithParams)
 
 UnitTestArgumentsWithParams::UnitTestArgumentsWithParams()
-    : UnitTestBase("UnitTestArgumentsWithParams") {
-    //
+    : WSJCppUnitTestBase("UnitTestArgumentsWithParams") {
 }
 
 // ---------------------------------------------------------------------
 
-void UnitTestArgumentsWithParams::init() {
-    // nothing
-}
 
 // ---------------------------------------------------------------------
 
@@ -66,6 +61,12 @@ class ArgumentProcessorUninstall : public WSJCppArgumentProcessor {
 
 // ---------------------------------------------------------------------
 
+void UnitTestArgumentsWithParams::init() {
+    // nothing
+}
+
+// ---------------------------------------------------------------------
+
 bool UnitTestArgumentsWithParams::run() {
     bool bTestSuccess = true;
 
@@ -73,7 +74,6 @@ bool UnitTestArgumentsWithParams::run() {
     const char *argv1[argc1] = {"./program", "-v", "uninstall", "1", "2"};
     WSJCppArguments args1(argc1, argv1, nullptr);
     // args1.getRoot().registryProcessor(new ArgumentProcessorUninstall());
-   
 
     // compareB(bTestSuccess, "canHandle-1", args1.canHandle(), true);
     // compareN(bTestSuccess, "handle-1", args1.handle(), 0);
@@ -84,6 +84,6 @@ bool UnitTestArgumentsWithParams::run() {
     // compareB(bTestSuccess, "canHandle-2", args2.canHandle(), false);
     // compareN(bTestSuccess, "handle-2", args2.handle(), -1);
 
-
     return bTestSuccess;
 }
+

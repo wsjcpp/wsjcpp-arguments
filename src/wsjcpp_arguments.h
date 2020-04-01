@@ -96,6 +96,7 @@ class WSJCppArgumentsSpliter {
 class WSJCppArguments {
     public:
         WSJCppArguments(int argc, const char* argv[], WSJCppArgumentProcessor *pRoot);
+        ~WSJCppArguments();
         int exec();
         std::string help();
 

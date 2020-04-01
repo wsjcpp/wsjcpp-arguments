@@ -1,6 +1,6 @@
 #include <string>
 #include <wsjcpp_core.h>
-#include <unit_tests.h>
+#include <wsjcpp_unit_tests.h>
 
 int main(int argc, char** argv) {
     WSJCppCore::initRandom();
@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
         return -1;
     }
 
-    if (!UnitTests::runUnitTests()) {
+    if (!WSJCppUnitTests::runUnitTests()) {
         WSJCppLog::err(TAG, "Some unit tests failed");
         return -1;
     }
