@@ -6,7 +6,7 @@
 REGISTRY_UNIT_TEST(UnitTestSimpleArguments)
 
 UnitTestSimpleArguments::UnitTestSimpleArguments()
-    : WSJCppUnitTestBase("UnitTestSimpleArguments") {
+    : WsjcppUnitTestBase("UnitTestSimpleArguments") {
 }
 
 // ---------------------------------------------------------------------
@@ -18,11 +18,11 @@ void UnitTestSimpleArguments::init() {
 
 // ---------------------------------------------------------------------
 
-class ArgumentProcessorInstall : public WSJCppArgumentProcessor {
+class ArgumentProcessorInstall : public WsjcppArgumentProcessor {
     public:
         ArgumentProcessorInstall();
 
-        // WSJCppArgumentProcessor
+        // WsjcppArgumentProcessor
         virtual bool applySingleArgument(const std::string &sProgramName, const std::string &sArgumentName);
         virtual bool applyParameterArgument(const std::string &sProgramName, const std::string &sArgumentName, const std::string &sValue);
         virtual int exec(const std::string &sProgramName, const std::vector<std::string> &vSubParams);
@@ -37,7 +37,7 @@ class ArgumentProcessorInstall : public WSJCppArgumentProcessor {
 // ---------------------------------------------------------------------
 
 ArgumentProcessorInstall::ArgumentProcessorInstall() 
- : WSJCppArgumentProcessor({"install", "i"}, "install something") {
+ : WsjcppArgumentProcessor({"install", "i"}, "install something") {
     TAG = "ArgumentProcessorInstall";
 
     registrySingleArgument("--silent", "Silent");
@@ -76,11 +76,11 @@ int ArgumentProcessorInstall::exec(const std::string &sProgramName, const std::v
 
 // ---------------------------------------------------------------------
 
-class ArgumentProcessorProgram1 : public WSJCppArgumentProcessor {
+class ArgumentProcessorProgram1 : public WsjcppArgumentProcessor {
     public:
         ArgumentProcessorProgram1();
         
-        // WSJCppArgumentProcessor
+        // WsjcppArgumentProcessor
         virtual bool applySingleArgument(const std::string &sProgramName, const std::string &sArgumentName);
         virtual bool applyParameterArgument(const std::string &sProgramName, const std::string &sArgumentName, const std::string &sValue);
         virtual int exec(const std::string &sProgramName, const std::vector<std::string> &vSubParams);
@@ -101,7 +101,7 @@ class ArgumentProcessorProgram1 : public WSJCppArgumentProcessor {
 // ---------------------------------------------------------------------
 
 ArgumentProcessorProgram1::ArgumentProcessorProgram1() 
-    : WSJCppArgumentProcessor({"program1"}, "Program for unit-tests") {
+    : WsjcppArgumentProcessor({"program1"}, "Program for unit-tests") {
     TAG = "ArgumentProcessorProgram1";
     registrySingleArgument("--hello", "Hello argument");
     registrySingleArgument("--hello2", "Hello2 argument");
@@ -188,7 +188,7 @@ bool UnitTestSimpleArguments::run() {
     const int argc1 = 8;
     const char *argv1[argc1] = {"./program", "--hello", "--hello2", "--hello3", "install", "--silent", "p1", "p2"};
     ArgumentProcessorProgram1 *pProgram1 = new ArgumentProcessorProgram1();
-    WSJCppArguments args1(argc1, argv1, pProgram1);
+    WsjcppArguments args1(argc1, argv1, pProgram1);
     compareN(bTestSuccess, "args1 exec", args1.exec(), 0);
     compareB(bTestSuccess, "args1 --hello", pProgram1->hello, true);
     compareB(bTestSuccess, "args1 --hello2", pProgram1->hello2, true);
@@ -208,7 +208,7 @@ bool UnitTestSimpleArguments::run() {
     const int argc2 = 8;
     const char *argv2[argc2] = {"./program", "--hello", "-param1", "p1", "-param2", "p2", "arg1", "arg2"};
 
-    WSJCppArguments args2(argc2, argv2, pProgram1);
+    WsjcppArguments args2(argc2, argv2, pProgram1);
     compareN(bTestSuccess, "args2 exec", args2.exec(), 0);
     compareB(bTestSuccess, "args2 --hello", pProgram1->hello, true);
     compareB(bTestSuccess, "args2 --hello2", pProgram1->hello2, false);
@@ -226,7 +226,7 @@ bool UnitTestSimpleArguments::run() {
     const int argc3 = 6;
     const char *argv3[argc3] = {"./program", "--hello", "i", "--silent", "some1", "some2"};
     
-    WSJCppArguments args3(argc3, argv3, pProgram1);
+    WsjcppArguments args3(argc3, argv3, pProgram1);
     compareN(bTestSuccess, "args3 exec", args3.exec(), 0);
 
     compareB(bTestSuccess, "args3 --hello", pProgram1->hello, true);
@@ -242,7 +242,7 @@ bool UnitTestSimpleArguments::run() {
     compareS(bTestSuccess, "args3 install argument 2", pProgram1->pInstall->vParams[1], "some2");
 
 
-    WSJCppLog::info(TAG, "\r\n" + args2.help());
+    WsjcppLog::info(TAG, "\r\n" + args2.help());
 
     return bTestSuccess;
 }

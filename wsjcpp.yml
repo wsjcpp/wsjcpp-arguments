@@ -25,7 +25,7 @@ required-libraries:
 
 dependencies:
   - name: "wsjcpp-core"
-    version: "v0.0.8"
+    version: "v0.1.0"
     url: "https://github.com/wsjcpp/wsjcpp-core:master"
     origin: "https://github.com/"
     installation-dir: "./src.wsjcpp/wsjcpp_core"
@@ -37,8 +37,8 @@ distribution:
   - source-file: src/wsjcpp_arguments.h
     target-file: wsjcpp_arguments.h
     type: "source-code"
-  - source-file: "scripts.wsjcpp/generate.WSJCppArgumentProcessor"
-    target-file: "generate.WSJCppArgumentProcessor"
+  - source-file: "scripts.wsjcpp/generate.WsjcppArgumentProcessor"
+    target-file: "generate.WsjcppArgumentProcessor"
     type: "safe-scripting-generate"
 
 unit-tests:

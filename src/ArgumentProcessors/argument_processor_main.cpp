@@ -6,7 +6,7 @@
 // ArgumentProcessorMain
 
 ArgumentProcessorMain::ArgumentProcessorMain() 
-: WSJCppArgumentProcessor({"main"}, "Examples") {
+: WsjcppArgumentProcessor({"main"}, "Examples") {
     TAG = "ArgumentProcessorMain";
     registrySingleArgument("--single1", "Single 1");
     registrySingleArgument("--single2", "Single 2");
@@ -19,7 +19,7 @@ ArgumentProcessorMain::ArgumentProcessorMain()
 // ---------------------------------------------------------------------
 
 bool ArgumentProcessorMain::applySingleArgument(const std::string &sProgramName, const std::string &sArgumentName) {
-    WSJCppLog::err(TAG, "Not implemented");
+    WsjcppLog::err(TAG, "Not implemented");
     return false;
 }
 
@@ -30,14 +30,14 @@ bool ArgumentProcessorMain::applyParameterArgument(
     const std::string &sArgumentName, 
     const std::string &sValue
 ) {
-    WSJCppLog::err(TAG, "Not implemented");
+    WsjcppLog::err(TAG, "Not implemented");
     return false;
 }
 
 // ---------------------------------------------------------------------
 
 int ArgumentProcessorMain::exec(const std::string &sProgramName, const std::vector<std::string> &vSubParams) {
-    WSJCppLog::err(TAG, "Not implemented");
+    WsjcppLog::err(TAG, "Not implemented");
     return -1;
 }
 

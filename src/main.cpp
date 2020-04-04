@@ -10,14 +10,14 @@ int main(int argc, const char* argv[]) {
     std::string appVersion = std::string(WSJCPP_VERSION);
 
     std::string appLogPath = ".logs";
-    if (!WSJCppCore::dirExists(appLogPath)) {
-        WSJCppCore::makeDir(appLogPath);
+    if (!WsjcppCore::dirExists(appLogPath)) {
+        WsjcppCore::makeDir(appLogPath);
     }
-    WSJCppLog::setPrefixLogFile("wsjcpp_arguments");
-    WSJCppLog::setLogDirectory(".logs");
+    WsjcppLog::setPrefixLogFile("wsjcpp_arguments");
+    WsjcppLog::setLogDirectory(".logs");
 
     ArgumentProcessorMain *pMain = new ArgumentProcessorMain();
-    WSJCppArguments prog(argc, argv, (WSJCppArgumentProcessor *)pMain);
+    WsjcppArguments prog(argc, argv, (WsjcppArgumentProcessor *)pMain);
 
     int nResult = prog.exec();
     if (nResult != 0) {

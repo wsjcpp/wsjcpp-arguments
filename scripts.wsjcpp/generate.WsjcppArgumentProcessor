@@ -36,7 +36,7 @@ concat content_header "#ifndef " ifndef_header "
 
 #include <wsjcpp_arguments.h>
 
-class " class_name " : public WSJCppArgumentProcessor {
+class " class_name " : public WsjcppArgumentProcessor {
     public:
         " class_name "();
 
@@ -57,7 +57,7 @@ concat content_source  "
 // " class_name "
 
 " class_name "::" class_name "() 
-: WSJCppArgumentProcessor({\"" argument_processor_name "\"}, \"TODO description\") {
+: WsjcppArgumentProcessor({\"" argument_processor_name "\"}, \"TODO description\") {
     TAG = \"" class_name "\";
     // registrySingleArgument(\"--single\", \"What exactly do this single param?\");
     // registryParameterArgument(\"-param\", \"What need this param?\");
@@ -68,7 +68,7 @@ concat content_source  "
 // ---------------------------------------------------------------------
 
 bool " class_name "::applySingleArgument(const std::string &sProgramName, const std::string &sArgumentName) {
-    WSJCppLog::err(TAG, \"Not implemented\");
+    WsjcppLog::err(TAG, \"Not implemented\");
     return false;
 }
 
@@ -79,14 +79,14 @@ bool " class_name "::applyParameterArgument(
     const std::string &sArgumentName, 
     const std::string &sValue
 ) {
-    WSJCppLog::err(TAG, \"Not implemented\");
+    WsjcppLog::err(TAG, \"Not implemented\");
     return false;
 }
 
 // ---------------------------------------------------------------------
 
 int " class_name "::exec(const std::string &sProgramName, const std::vector<std::string> &vSubParams) {
-    WSJCppLog::err(TAG, \"Not implemented\");
+    WsjcppLog::err(TAG, \"Not implemented\");
     return -1; 
 }
 "

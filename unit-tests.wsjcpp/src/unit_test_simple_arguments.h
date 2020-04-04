@@ -4,7 +4,7 @@
 #include <wsjcpp_unit_tests.h>
 
 // Description: TODO
-class UnitTestSimpleArguments : public WSJCppUnitTestBase {
+class UnitTestSimpleArguments : public WsjcppUnitTestBase {
     public:
         UnitTestSimpleArguments();
         virtual void init();

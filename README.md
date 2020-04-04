@@ -1,6 +1,6 @@
 # wsjcpp-arguments
 
-[![Build Status](https://api.travis-ci.org/wsjcpp/wsjcpp-arguments.svg?branch=master)](https://travis-ci.org/wsjcpp/wsjcpp-arguments) [![Github Stars](https://img.shields.io/github/stars/wsjcpp/wsjcpp-arguments.svg?label=github%20%E2%98%85)](https://github.com/wsjcpp/wsjcpp-arguments/stargazers) [![Github Stars](https://img.shields.io/github/contributors/wsjcpp/wsjcpp-arguments.svg)](https://github.com/wsjcpp/wsjcpp-arguments/) [![Github Forks](https://img.shields.io/github/forks/wsjcpp/wsjcpp-arguments.svg?label=github%20forks)](https://github.com/wsjcpp/wsjcpp-arguments/network/members)
+[![Build Status](https://api.travis-ci.com/wsjcpp/wsjcpp-arguments.svg?branch=master)](https://travis-ci.com/wsjcpp/wsjcpp-arguments) [![Github Stars](https://img.shields.io/github/stars/wsjcpp/wsjcpp-arguments.svg?label=github%20%E2%98%85)](https://github.com/wsjcpp/wsjcpp-arguments/stargazers) [![Github Stars](https://img.shields.io/github/contributors/wsjcpp/wsjcpp-arguments.svg)](https://github.com/wsjcpp/wsjcpp-arguments/) [![Github Forks](https://img.shields.io/github/forks/wsjcpp/wsjcpp-arguments.svg?label=github%20forks)](https://github.com/wsjcpp/wsjcpp-arguments/network/members)
 
 Parsing and handling for application arguments
 
@@ -26,7 +26,7 @@ header `argument_processor_test_program.h`:
 
 #include <wsjcpp_arguments.h>
 
-class ArgumentProcessorMain : public WSJCppArgumentProcessor {
+class ArgumentProcessorMain : public WsjcppArgumentProcessor {
     public:
         ArgumentProcessorMain();
 
@@ -48,7 +48,7 @@ source-code `argument_processor_main.cpp`:
 // ArgumentProcessorMain
 
 ArgumentProcessorMain::ArgumentProcessorMain() 
-: WSJCppArgumentProcessor("test_program", "TODO description") {
+: WsjcppArgumentProcessor("test_program", "TODO description") {
     TAG = "ArgumentProcessorMain";
     // registrySingleArgument("--single", "What exactly do this single param?");
     // registryParameterArgument("-param", "What need this param?");
@@ -59,7 +59,7 @@ ArgumentProcessorMain::ArgumentProcessorMain()
 // ---------------------------------------------------------------------
 
 bool ArgumentProcessorMain::applySingleArgument(const std::string &sProgramName, const std::string &sArgumentName) {
-    WSJCppLog::err(TAG, "Not implemented");
+    WsjcppLog::err(TAG, "Not implemented");
     return false;
 }
 
@@ -70,14 +70,14 @@ bool ArgumentProcessorMain::applyParameterArgument(
     const std::string &sArgumentName, 
     const std::string &sValue
 ) {
-    WSJCppLog::err(TAG, "Not implemented");
+    WsjcppLog::err(TAG, "Not implemented");
     return false;
 }
 
 // ---------------------------------------------------------------------
 
 int ArgumentProcessorMain::exec(const std::string &sProgramName, const std::vector<std::string> &vSubParams) {
-    WSJCppLog::err(TAG, "Not implemented");
+    WsjcppLog::err(TAG, "Not implemented");
     return -1; 
 }
 ```
@@ -90,7 +90,7 @@ usage:
 
 int main(int argc, const char* argv[]) {
     ArgumentProcessorMain *pMain = new ArgumentProcessorMain();
-    WSJCppArguments prog(argc, argv, pMain);
+    WsjcppArguments prog(argc, argv, pMain);
 
     int nResult = prog.exec();
     if (nResult != 0) {
