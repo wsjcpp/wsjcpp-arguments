@@ -7,9 +7,23 @@ class ArgumentProcessorMain : public WsjcppArgumentProcessor {
     public:
         ArgumentProcessorMain();
 
-        virtual bool applyParameterArgument(const std::string &sProgramName, const std::string &sArgumentName, const std::string &sValue);
+
         virtual bool applySingleArgument(const std::string &sProgramName, const std::string &sArgumentName);
-        virtual int exec(const std::string &sProgramName, const std::vector<std::string> &vSubParams);
+        virtual bool applyParameterArgument(const std::string &sProgramName, const std::string &sArgumentName, const std::string &sValue);
+        virtual int exec(const std::vector<std::string> &vRoutes, const std::vector<std::string> &vSubParams);
+};
+
+class ArgumentProcessorSubcommand1 : public WsjcppArgumentProcessor {
+    public:
+        ArgumentProcessorSubcommand1();
+        virtual bool applySingleArgument(const std::string &sProgramName, const std::string &sArgumentName);
+        virtual bool applyParameterArgument(const std::string &sProgramName, const std::string &sArgumentName, const std::string &sValue);
+        virtual int exec(const std::vector<std::string> &vRoutes, const std::vector<std::string> &vSubParams);
+
+    private:
+        bool m_bSilent;
+        bool m_bFirst;
+        int m_nTimesTest;
 };
 
 #endif // ARGUMENT_PROCESSOR_MAIN_H
