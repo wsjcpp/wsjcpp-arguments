@@ -25,7 +25,7 @@ class ArgumentProcessorInstall : public WsjcppArgumentProcessor {
         // WsjcppArgumentProcessor
         virtual bool applySingleArgument(const std::string &sProgramName, const std::string &sArgumentName);
         virtual bool applyParameterArgument(const std::string &sProgramName, const std::string &sArgumentName, const std::string &sValue);
-        virtual int exec(const std::string &sProgramName, const std::vector<std::string> &vSubParams);
+        virtual int exec(const std::vector<std::string> &vRoutes, const std::vector<std::string> &vSubParams);
         
         void reset();
         bool silent;
@@ -37,7 +37,7 @@ class ArgumentProcessorInstall : public WsjcppArgumentProcessor {
 // ---------------------------------------------------------------------
 
 ArgumentProcessorInstall::ArgumentProcessorInstall() 
- : WsjcppArgumentProcessor({"install", "i"}, "install something") {
+ : WsjcppArgumentProcessor({"install", "i"}, "install", "install something") {
     TAG = "ArgumentProcessorInstall";
 
     registrySingleArgument("--silent", "Silent");
@@ -69,7 +69,7 @@ bool ArgumentProcessorInstall::applyParameterArgument(const std::string &sProgra
 
 // ---------------------------------------------------------------------
 
-int ArgumentProcessorInstall::exec(const std::string &sProgramName, const std::vector<std::string> &vSubParams) {
+int ArgumentProcessorInstall::exec(const std::vector<std::string> &vRoutes, const std::vector<std::string> &vSubParams) {
     vParams = std::vector<std::string>(vSubParams);
     return 0;
 };
@@ -83,7 +83,7 @@ class ArgumentProcessorProgram1 : public WsjcppArgumentProcessor {
         // WsjcppArgumentProcessor
         virtual bool applySingleArgument(const std::string &sProgramName, const std::string &sArgumentName);
         virtual bool applyParameterArgument(const std::string &sProgramName, const std::string &sArgumentName, const std::string &sValue);
-        virtual int exec(const std::string &sProgramName, const std::vector<std::string> &vSubParams);
+        virtual int exec(const std::vector<std::string> &vRoutes, const std::vector<std::string> &vSubParams);
 
         void reset();
         bool hello;
@@ -101,14 +101,14 @@ class ArgumentProcessorProgram1 : public WsjcppArgumentProcessor {
 // ---------------------------------------------------------------------
 
 ArgumentProcessorProgram1::ArgumentProcessorProgram1() 
-    : WsjcppArgumentProcessor({"program1"}, "Program for unit-tests") {
+    : WsjcppArgumentProcessor({"program1"}, "install", "Program for unit-tests") {
     TAG = "ArgumentProcessorProgram1";
     registrySingleArgument("--hello", "Hello argument");
     registrySingleArgument("--hello2", "Hello2 argument");
     registrySingleArgument("--hello3", "Hello3 argument");
-    registryParameterArgument("-param1", "Parameter 1");
-    registryParameterArgument("-param2", "Parameter 2");
-    registryParameterArgument("-h", "Parameter hello");
+    registryParameterArgument("-param1", "str", "Parameter 1");
+    registryParameterArgument("-param2", "str", "Parameter 2");
+    registryParameterArgument("-h", "str", "Parameter hello");
     pInstall = new ArgumentProcessorInstall();
     registryProcessor(pInstall);
 
@@ -175,7 +175,7 @@ bool ArgumentProcessorProgram1::applyParameterArgument(const std::string &sProgr
 
 // ---------------------------------------------------------------------
 
-int ArgumentProcessorProgram1::exec(const std::string &sProgramName, const std::vector<std::string> &vSubParams) {
+int ArgumentProcessorProgram1::exec(const std::vector<std::string> &vRoutes, const std::vector<std::string> &vSubParams) {
     vParams = std::vector<std::string>(vSubParams);
     return 0;
 };
@@ -242,7 +242,7 @@ bool UnitTestSimpleArguments::run() {
     compareS(bTestSuccess, "args3 install argument 2", pProgram1->pInstall->vParams[1], "some2");
 
 
-    WsjcppLog::info(TAG, "\r\n" + args2.help());
+    // WsjcppLog::info(TAG, "\r\n" + args2.help());
 
     return bTestSuccess;
 }

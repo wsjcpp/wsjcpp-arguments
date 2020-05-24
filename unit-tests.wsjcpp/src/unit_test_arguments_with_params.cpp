@@ -16,17 +16,17 @@ UnitTestArgumentsWithParams::UnitTestArgumentsWithParams()
 
 class ArgumentProcessorUninstall : public WsjcppArgumentProcessor {
     public:
-        ArgumentProcessorUninstall() : WsjcppArgumentProcessor({"uninstall"}, "uninstall something") {
+        ArgumentProcessorUninstall() : WsjcppArgumentProcessor({"uninstall"}, "uninstall", "uninstall something") {
             TAG = "ArgumentProcessorUninstall";
         };
 
-        virtual int handle(const std::string &sProgramName, const std::vector<std::string> &vSubParams) {
+        virtual int exec(const std::vector<std::string> &vRoutes, const std::vector<std::string> &vSubParams) {
             if (vSubParams.size() != 3) {
                 WsjcppLog::err(TAG, "Expected 3 args");
                 return -1;
             }
 
-            if (sProgramName != "./program") {
+            if (vRoutes[0] != "./program") {
                 WsjcppLog::err(TAG, "sProgramName expected as './program'");
                 return -1;
             }

@@ -51,7 +51,7 @@ ArgumentProcessorMain::ArgumentProcessorMain()
 : WsjcppArgumentProcessor("test_program", "TODO description") {
     TAG = "ArgumentProcessorMain";
     // registrySingleArgument("--single", "What exactly do this single param?");
-    // registryParameterArgument("-param", "What need this param?");
+    // registryParameterArgument("-param", "N", "What need this param?");
     // registryExample("here example of command");
     // registryProcessor(new ArgumentProcessorOtherProcessor());
 }
@@ -76,7 +76,10 @@ bool ArgumentProcessorMain::applyParameterArgument(
 
 // ---------------------------------------------------------------------
 
-int ArgumentProcessorMain::exec(const std::string &sProgramName, const std::vector<std::string> &vSubParams) {
+int ArgumentProcessorMain::exec(
+    const std::vector<std::string> &vRoutes,
+    const std::vector<std::string> &vSubParams
+) {
     WsjcppLog::err(TAG, "Not implemented");
     return -1; 
 }
