@@ -426,7 +426,7 @@ std::vector<std::string> WsjcppArguments::extractSingleAndParameterArguments(
                 bFound = true;
                 vParameterArguments.push_back(pParameter);
                 vArgs.erase(vArgs.begin());
-                if (vArgs.size() == 0) {
+                if (vArgs.empty()) {
                     WsjcppLog::throw_err(TAG, "Expected value for '" + pParameter->getName() + "'");
                 } else {
                     pParameter->setValue(vArgs[0]);
