@@ -57,7 +57,7 @@ concat content_source  "
 // " class_name "
 
 " class_name "::" class_name "() 
-: WsjcppArgumentProcessor({\"" argument_processor_name "\"}, \"TODO description\") {
+: WsjcppArgumentProcessor({\"" argument_processor_name "\"}, \"TODO short description\", \"TODO long description\") {
     TAG = \"" class_name "\";
     // registrySingleArgument(\"--single\", \"What exactly do this single param?\");
     // registryParameterArgument(\"-param\", \"N\", \"What need this param?\");
