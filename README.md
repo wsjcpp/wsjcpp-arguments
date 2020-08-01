@@ -94,13 +94,6 @@ usage:
 int main(int argc, const char* argv[]) {
     ArgumentProcessorMain *pMain = new ArgumentProcessorMain();
     WsjcppArguments prog(argc, argv, pMain);
-
-    int nResult = prog.exec();
-    if (nResult != 0) {
-        // print help
-        std::cout << "Try exec help" << std::endl;
-        std::cout << prog.help();
-    }
-    return nResult;
+    return prog.exec();
 }
 ```
