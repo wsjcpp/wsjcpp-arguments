@@ -3,16 +3,8 @@
 #include <wsjcpp_core.h>
 #include <wsjcpp_arguments.h>
 
-REGISTRY_UNIT_TEST(UnitTestArgumentsWithParams)
-
-UnitTestArgumentsWithParams::UnitTestArgumentsWithParams()
-    : WsjcppUnitTestBase("UnitTestArgumentsWithParams") {
-}
-
 // ---------------------------------------------------------------------
-
-
-// ---------------------------------------------------------------------
+// ArgumentProcessorUninstall
 
 class ArgumentProcessorUninstall : public WsjcppArgumentProcessor {
     public:
@@ -61,14 +53,22 @@ class ArgumentProcessorUninstall : public WsjcppArgumentProcessor {
 
 // ---------------------------------------------------------------------
 
-void UnitTestArgumentsWithParams::init() {
-    // nothing
+REGISTRY_WSJCPP_UNIT_TEST(UnitTestArgumentsWithParams)
+
+UnitTestArgumentsWithParams::UnitTestArgumentsWithParams()
+    : WsjcppUnitTestBase("UnitTestArgumentsWithParams") {
 }
 
 // ---------------------------------------------------------------------
 
-bool UnitTestArgumentsWithParams::run() {
-    bool bTestSuccess = true;
+bool UnitTestArgumentsWithParams::doBeforeTest() {
+    // nothing
+    return true;
+}
+
+// ---------------------------------------------------------------------
+
+void UnitTestArgumentsWithParams::executeTest() {
 
     const int argc1 = 5;
     const char *argv1[argc1] = {"./program", "-v", "uninstall", "1", "2"};
@@ -84,6 +84,12 @@ bool UnitTestArgumentsWithParams::run() {
     // compareB(bTestSuccess, "canHandle-2", args2.canHandle(), false);
     // compareN(bTestSuccess, "handle-2", args2.handle(), -1);
 
-    return bTestSuccess;
+}
+
+// ---------------------------------------------------------------------
+
+bool UnitTestArgumentsWithParams::doAfterTest() {
+    // nothing
+    return true;
 }
 
