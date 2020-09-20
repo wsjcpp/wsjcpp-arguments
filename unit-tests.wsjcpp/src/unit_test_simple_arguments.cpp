@@ -3,20 +3,8 @@
 #include <wsjcpp_core.h>
 #include <wsjcpp_arguments.h>
 
-REGISTRY_UNIT_TEST(UnitTestSimpleArguments)
-
-UnitTestSimpleArguments::UnitTestSimpleArguments()
-    : WsjcppUnitTestBase("UnitTestSimpleArguments") {
-}
-
 // ---------------------------------------------------------------------
-
-void UnitTestSimpleArguments::init() {
-    // nothing
-}
-
-
-// ---------------------------------------------------------------------
+// ArgumentProcessorInstall
 
 class ArgumentProcessorInstall : public WsjcppArgumentProcessor {
     public:
@@ -181,27 +169,42 @@ int ArgumentProcessorProgram1::exec(const std::vector<std::string> &vRoutes, con
 };
 
 // ---------------------------------------------------------------------
+// UnitTestSimpleArguments
 
-bool UnitTestSimpleArguments::run() {
-    bool bTestSuccess = true;
+REGISTRY_WSJCPP_UNIT_TEST(UnitTestSimpleArguments)
+
+UnitTestSimpleArguments::UnitTestSimpleArguments()
+    : WsjcppUnitTestBase("UnitTestSimpleArguments") {
+}
+
+// ---------------------------------------------------------------------
+
+bool UnitTestSimpleArguments::doBeforeTest() {
+    // nothing
+    return true;
+}
+
+// ---------------------------------------------------------------------
+
+void UnitTestSimpleArguments::executeTest() {
 
     const int argc1 = 8;
     const char *argv1[argc1] = {"./program", "--hello", "--hello2", "--hello3", "install", "--silent", "p1", "p2"};
     ArgumentProcessorProgram1 *pProgram1 = new ArgumentProcessorProgram1();
     WsjcppArguments args1(argc1, argv1, pProgram1);
-    compareN(bTestSuccess, "args1 exec", args1.exec(), 0);
-    compareB(bTestSuccess, "args1 --hello", pProgram1->hello, true);
-    compareB(bTestSuccess, "args1 --hello2", pProgram1->hello2, true);
-    compareB(bTestSuccess, "args1 --hello3", pProgram1->hello3, true);
+    compare("args1 exec", args1.exec(), 0);
+    compare("args1 --hello", pProgram1->hello, true);
+    compare("args1 --hello2", pProgram1->hello2, true);
+    compare("args1 --hello3", pProgram1->hello3, true);
 
-    compareS(bTestSuccess, "args1 -param1", pProgram1->param1, "");
-    compareS(bTestSuccess, "args1 -param2", pProgram1->param2, "");
-    compareS(bTestSuccess, "args1 -h", pProgram1->h, "");
+    compare("args1 -param1", pProgram1->param1, "");
+    compare("args1 -param2", pProgram1->param2, "");
+    compare("args1 -h", pProgram1->h, "");
 
-    compareB(bTestSuccess, "args1 install --silent", pProgram1->pInstall->silent, true);
-    compareN(bTestSuccess, "args1 install arguments size", pProgram1->pInstall->vParams.size(), 2);
-    compareS(bTestSuccess, "args1 install argument 1", pProgram1->pInstall->vParams[0], "p1");
-    compareS(bTestSuccess, "args1 install argument 2", pProgram1->pInstall->vParams[1], "p2");
+    compare("args1 install --silent", pProgram1->pInstall->silent, true);
+    compare("args1 install arguments size", pProgram1->pInstall->vParams.size(), 2);
+    compare("args1 install argument 1", pProgram1->pInstall->vParams[0], "p1");
+    compare("args1 install argument 2", pProgram1->pInstall->vParams[1], "p2");
     
     pProgram1->reset();
 
@@ -209,17 +212,17 @@ bool UnitTestSimpleArguments::run() {
     const char *argv2[argc2] = {"./program", "--hello", "-param1", "p1", "-param2", "p2", "arg1", "arg2"};
 
     WsjcppArguments args2(argc2, argv2, pProgram1);
-    compareN(bTestSuccess, "args2 exec", args2.exec(), 0);
-    compareB(bTestSuccess, "args2 --hello", pProgram1->hello, true);
-    compareB(bTestSuccess, "args2 --hello2", pProgram1->hello2, false);
-    compareB(bTestSuccess, "args2 --hello3", pProgram1->hello3, false);
+    compare("args2 exec", args2.exec(), 0);
+    compare("args2 --hello", pProgram1->hello, true);
+    compare("args2 --hello2", pProgram1->hello2, false);
+    compare("args2 --hello3", pProgram1->hello3, false);
 
-    compareS(bTestSuccess, "args2 -param1", pProgram1->param1, "p1");
-    compareS(bTestSuccess, "args2 -param2", pProgram1->param2, "p2");
-    compareS(bTestSuccess, "args2 -h", pProgram1->h, "");
-    compareN(bTestSuccess, "args2 arguments size", pProgram1->vParams.size(), 2);
-    compareS(bTestSuccess, "args2 argument 2", pProgram1->vParams[0], "arg1");
-    compareS(bTestSuccess, "args2 argument 2", pProgram1->vParams[1], "arg2");
+    compare("args2 -param1", pProgram1->param1, "p1");
+    compare("args2 -param2", pProgram1->param2, "p2");
+    compare("args2 -h", pProgram1->h, "");
+    compare("args2 arguments size", pProgram1->vParams.size(), 2);
+    compare("args2 argument 2", pProgram1->vParams[0], "arg1");
+    compare("args2 argument 2", pProgram1->vParams[1], "arg2");
     
     pProgram1->reset();
 
@@ -227,23 +230,27 @@ bool UnitTestSimpleArguments::run() {
     const char *argv3[argc3] = {"./program", "--hello", "i", "--silent", "some1", "some2"};
     
     WsjcppArguments args3(argc3, argv3, pProgram1);
-    compareN(bTestSuccess, "args3 exec", args3.exec(), 0);
+    compare("args3 exec", args3.exec(), 0);
 
-    compareB(bTestSuccess, "args3 --hello", pProgram1->hello, true);
-    compareB(bTestSuccess, "args3 --hello2", pProgram1->hello2, false);
-    compareB(bTestSuccess, "args3 --hello3", pProgram1->hello3, false);
+    compare("args3 --hello", pProgram1->hello, true);
+    compare("args3 --hello2", pProgram1->hello2, false);
+    compare("args3 --hello3", pProgram1->hello3, false);
 
-    compareS(bTestSuccess, "args3 -param1", pProgram1->param1, "");
-    compareS(bTestSuccess, "args3 -param2", pProgram1->param2, "");
+    compare("args3 -param1", pProgram1->param1, "");
+    compare("args3 -param2", pProgram1->param2, "");
 
-    compareB(bTestSuccess, "args3 install --silent", pProgram1->pInstall->silent, true);
-    compareN(bTestSuccess, "args3 install arguments size", pProgram1->pInstall->vParams.size(), 2);
-    compareS(bTestSuccess, "args3 install argument 1", pProgram1->pInstall->vParams[0], "some1");
-    compareS(bTestSuccess, "args3 install argument 2", pProgram1->pInstall->vParams[1], "some2");
+    compare("args3 install --silent", pProgram1->pInstall->silent, true);
+    compare("args3 install arguments size", pProgram1->pInstall->vParams.size(), 2);
+    compare("args3 install argument 1", pProgram1->pInstall->vParams[0], "some1");
+    compare("args3 install argument 2", pProgram1->pInstall->vParams[1], "some2");
 
 
     // WsjcppLog::info(TAG, "\r\n" + args2.help());
-
-    return bTestSuccess;
 }
 
+// ---------------------------------------------------------------------
+
+bool UnitTestSimpleArguments::doAfterTest() {
+    // nothing
+    return true;
+}
