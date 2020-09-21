@@ -14,6 +14,7 @@ ArgumentProcessorMain::ArgumentProcessorMain()
     registryParameterArgument("-param2", "P", "Param 2");
     registryExample("wsjcpp --single1 -param1 1");
     registryProcessor(new ArgumentProcessorSubcommand1());
+    registryProcessor(new ArgumentProcessorNothing());
 }
 
 // ---------------------------------------------------------------------
@@ -33,14 +34,6 @@ bool ArgumentProcessorMain::applyParameterArgument(
     WsjcppLog::err(TAG, "Not implemented");
     return false;
 }
-
-// ---------------------------------------------------------------------
-
-int ArgumentProcessorMain::exec(const std::vector<std::string> &vRoutes, const std::vector<std::string> &vSubParams) {
-    WsjcppLog::err(TAG, "Not implemented");
-    return -1;
-}
-
 
 // ---------------------------------------------------------------------
 // ArgumentProcessorSubcommand1
@@ -97,3 +90,21 @@ int ArgumentProcessorSubcommand1::exec(const std::vector<std::string> &vRoutes, 
     return 0;
 }
 
+// ---------------------------------------------------------------------
+// ArgumentProcessorNothing
+
+ArgumentProcessorNothing::ArgumentProcessorNothing() 
+: WsjcppArgumentProcessor(
+    {"nothing", "n"}, 
+    "nothing",
+    "Example of nothing with long description must be here 12345678901234567890 lol again"
+) {
+    TAG = "ArgumentProcessorSubcommand1";
+}
+
+// ---------------------------------------------------------------------
+
+int ArgumentProcessorNothing::exec(const std::vector<std::string> &vRoutes, const std::vector<std::string> &vSubParams) {
+    std::cout << "Nothing" << std::endl;
+    return 0;
+}

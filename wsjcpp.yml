@@ -37,8 +37,8 @@ distribution:
   - source-file: src/wsjcpp_arguments.h
     target-file: wsjcpp_arguments.h
     type: "source-code"
-  - source-file: "scripts.wsjcpp/generate.WsjcppArgumentProcessor"
-    target-file: "generate.WsjcppArgumentProcessor"
+  - source-file: "scripts.wsjcpp/generate.WsjcppArgumentProcessor.wsjcpp-script"
+    target-file: "generate.WsjcppArgumentProcessor.wsjcpp-script"
     type: "safe-scripting-generate"
 
 unit-tests:

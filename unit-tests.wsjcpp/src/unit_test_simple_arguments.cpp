@@ -1,4 +1,4 @@
-#include "unit_test_simple_arguments.h"
+#include <wsjcpp_unit_tests.h>
 #include <vector>
 #include <wsjcpp_core.h>
 #include <wsjcpp_arguments.h>
@@ -170,6 +170,14 @@ int ArgumentProcessorProgram1::exec(const std::vector<std::string> &vRoutes, con
 
 // ---------------------------------------------------------------------
 // UnitTestSimpleArguments
+
+class UnitTestSimpleArguments : public WsjcppUnitTestBase {
+    public:
+        UnitTestSimpleArguments();
+        virtual bool doBeforeTest() override;
+        virtual void executeTest() override;
+        virtual bool doAfterTest() override;
+};
 
 REGISTRY_WSJCPP_UNIT_TEST(UnitTestSimpleArguments)
 

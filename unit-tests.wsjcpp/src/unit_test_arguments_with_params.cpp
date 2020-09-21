@@ -1,4 +1,4 @@
-#include "unit_test_arguments_with_params.h"
+#include <wsjcpp_unit_tests.h>
 #include <vector>
 #include <wsjcpp_core.h>
 #include <wsjcpp_arguments.h>
@@ -52,6 +52,15 @@ class ArgumentProcessorUninstall : public WsjcppArgumentProcessor {
 };
 
 // ---------------------------------------------------------------------
+// UnitTestArgumentsWithParams
+
+class UnitTestArgumentsWithParams : public WsjcppUnitTestBase {
+    public:
+        UnitTestArgumentsWithParams();
+        virtual bool doBeforeTest() override;
+        virtual void executeTest() override;
+        virtual bool doAfterTest() override;
+};
 
 REGISTRY_WSJCPP_UNIT_TEST(UnitTestArgumentsWithParams)
 
