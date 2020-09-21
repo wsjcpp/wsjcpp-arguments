@@ -293,16 +293,34 @@ int WsjcppArgumentProcessor::help(
 
         for (int i = 0; i < m_vProcessors.size(); i++) {
             WsjcppArgumentProcessor *pProc = m_vProcessors[i];
+            std::cout << "     " << pProc->getNamesAsString();
 
-            std::cout 
-                << "     " << pProc->getNamesAsString() << " [<options>...]"
-                << std::endl
-                << "          Subcommand. Try help for more. " << pProc->getDescription()
-                << std::endl
-                << std::endl;
+            if (pProc->hasMoreOptions()) {
+                std::cout 
+                    << " [<options>...]"
+                    << std::endl
+                    << "          Subcommand. Try help for more. " << pProc->getDescription()
+                    << std::endl
+                ;
+            } else {
+                std::cout 
+                    << std::endl
+                    << "          " << pProc->getDescription()
+                    << std::endl
+                ;
+            }
+            std::cout << std::endl;            
         }
     }
     return 0;
+}
+
+// ---------------------------------------------------------------------
+
+bool WsjcppArgumentProcessor::hasMoreOptions() {
+    return m_vProcessors.size() > 0
+        || m_vSingleArguments.size() > 0
+        || m_vParameterArguments.size() > 0;
 }
 
 // ---------------------------------------------------------------------

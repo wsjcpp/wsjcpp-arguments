@@ -67,13 +67,14 @@ class WsjcppArgumentProcessor {
         WsjcppArgumentParameter *findRegisteredParameterArgument(const std::string &sArgumentName);
 
         bool hasRegisteredArgumentName(const std::string &sArgumentName);
-        
+
         bool getValueOfParam(const std::string &sArgumentName);
         int help(
             const std::vector<std::string> &vRoutes, 
             const std::vector<std::string> &vSubParams
         );
-
+        bool hasMoreOptions();
+        
         virtual bool applySingleArgument(const std::string &sProgramName, const std::string &sArgumentName);
         virtual bool applyParameterArgument(const std::string &sProgramName, const std::string &sArgumentName, const std::string &sValue);
         virtual int exec(const std::vector<std::string> &vRoutes, const std::vector<std::string> &vSubParams);

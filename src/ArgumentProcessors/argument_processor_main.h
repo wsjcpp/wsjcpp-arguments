@@ -26,4 +26,10 @@ class ArgumentProcessorSubcommand1 : public WsjcppArgumentProcessor {
         int m_nTimesTest;
 };
 
+class ArgumentProcessorNothing : public WsjcppArgumentProcessor {
+    public:
+        ArgumentProcessorNothing();
+        virtual int exec(const std::vector<std::string> &vRoutes, const std::vector<std::string> &vSubParams) override;
+};
+
 #endif // ARGUMENT_PROCESSOR_MAIN_H
