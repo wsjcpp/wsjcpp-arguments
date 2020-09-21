@@ -74,7 +74,7 @@ class WsjcppArgumentProcessor {
             const std::vector<std::string> &vSubParams
         );
         bool hasMoreOptions();
-        
+
         virtual bool applySingleArgument(const std::string &sProgramName, const std::string &sArgumentName);
         virtual bool applyParameterArgument(const std::string &sProgramName, const std::string &sArgumentName, const std::string &sValue);
         virtual int exec(const std::vector<std::string> &vRoutes, const std::vector<std::string> &vSubParams);
@@ -113,6 +113,7 @@ class WsjcppArguments {
     public:
         WsjcppArguments(int argc, const char* argv[], WsjcppArgumentProcessor *pRoot);
         ~WsjcppArguments();
+        void enablePrintAutoHelp(bool bEnablePrintAutoHelp);
         int exec();
 
     private:
@@ -132,7 +133,9 @@ class WsjcppArguments {
         std::string TAG;
         std::vector<std::string> m_vArguments;
         std::string m_sProgramName;
+        bool m_bEnablePrintAutoHelp;
         std::vector<WsjcppArgumentProcessor *> m_vProcessors;
+        
 };
 
 // ---------------------------------------------------------------------

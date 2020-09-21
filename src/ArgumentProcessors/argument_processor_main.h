@@ -6,11 +6,8 @@
 class ArgumentProcessorMain : public WsjcppArgumentProcessor {
     public:
         ArgumentProcessorMain();
-
-
         virtual bool applySingleArgument(const std::string &sProgramName, const std::string &sArgumentName);
         virtual bool applyParameterArgument(const std::string &sProgramName, const std::string &sArgumentName, const std::string &sValue);
-        virtual int exec(const std::vector<std::string> &vRoutes, const std::vector<std::string> &vSubParams);
 };
 
 class ArgumentProcessorSubcommand1 : public WsjcppArgumentProcessor {

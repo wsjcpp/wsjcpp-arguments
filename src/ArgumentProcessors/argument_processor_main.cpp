@@ -36,13 +36,6 @@ bool ArgumentProcessorMain::applyParameterArgument(
 }
 
 // ---------------------------------------------------------------------
-
-int ArgumentProcessorMain::exec(const std::vector<std::string> &vRoutes, const std::vector<std::string> &vSubParams) {
-    WsjcppLog::err(TAG, "Not implemented");
-    return -1;
-}
-
-// ---------------------------------------------------------------------
 // ArgumentProcessorSubcommand1
 
 ArgumentProcessorSubcommand1::ArgumentProcessorSubcommand1() 
