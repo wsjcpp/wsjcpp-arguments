@@ -97,3 +97,13 @@ int main(int argc, const char* argv[]) {
     return prog.exec();
 }
 ```
+
+## wsjcpp gen
+
+```
+wsjcpp gen WsjcppArgumentProcessor Main
+```
+
+After this will be created two files by template:
+- src/argument_processor_main.h
+- src/argument_processor_main.cpp
